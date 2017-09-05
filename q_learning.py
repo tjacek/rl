@@ -9,7 +9,7 @@ class QLearningAlg(object):
     def update(self,state_i,action_i,r_i):
         old_value=self.q(state_i,action_i)
         new_value=old_value+ self.alpha*(r_i + self.gamma*self.q.max(state_i) - old_value)
-        self.q(state_i,action_i,new_value) 
+        self.q(state_i,action_i,new_value)
 
 class QFactorLookup(object):
     def __init__(self,q):
@@ -24,7 +24,8 @@ class QFactorLookup(object):
         return max(self.q[state_i])
 
     def best_action(self,state_i):
-        expected_values=np.array(self.q[state_i])
+        q_state=self.q[state_i].values()        
+        expected_values=np.array(q_state)
         return np.argmax(expected_values)
 
 def make_qfactor_lookup(envir):
