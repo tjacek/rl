@@ -1,4 +1,4 @@
-import envir 
+import envir.bandit 
 import q_learning
 import numpy as np
 
@@ -16,14 +16,14 @@ class Experiment(object):
         return (action_i,reward_i)
 
     def select_action(self,state_i):
-    	p=np.random.uniform()
+        p=np.random.uniform()
         if(p>self.epsi):
             return self.alg.q.best_action(state_i)
         else:
-        	actions=self.envir.get_actions()
-        	return np.random.choice(actions)
+            actions=self.envir.get_actions()
+            return np.random.choice(actions)
 
-bandit=envir.make_binomial_bandit()
+bandit=envir.bandit.make_binomial_bandit()
 q=q_learning.make_qfactor_lookup(bandit)
 alg=q_learning.QLearningAlg(q,0.9,0.5)
 exper=Experiment(bandit,alg)

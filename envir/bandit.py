@@ -1,13 +1,7 @@
 import numpy as np 
+import envir
 
-class Enviroment(object):
-    def __init__(self, state):
-        self.state = state
-    
-    def get_current_state(self):
-        return self.state    
-
-class MultiArmBandit(Enviroment):
+class MultiArmBandit(envir.Enviroment):
     def __init__(self,dists):
         super(MultiArmBandit, self).__init__(state=0)
         self.dists=dists
@@ -15,14 +9,14 @@ class MultiArmBandit(Enviroment):
     def __str__(self):
         bandit_txt=''
         for dist_i in self.dists:
-            bandit_txt+=str(dist_i)+'\n'	
+            bandit_txt+=str(dist_i)+'\n'    
         return bandit_txt   
 
     def get_actions(self):
         return range(len(self.dists))
 
     def get_states(self):
-        return [super.state]	
+        return [self.state] 
      
     def next_step(self,action_i):
         if(type(action_i)==int):
