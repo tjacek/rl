@@ -1,24 +1,28 @@
 import numpy as np 
 
-class MultiArmBandit(object):
+class Enviroment(object):
+    def __init__(self, state):
+        self.state = state
+    
+    def get_current_state(self):
+        return self.state    
+
+class MultiArmBandit(Enviroment):
     def __init__(self,dists):
+        super(MultiArmBandit, self).__init__(state=0)
         self.dists=dists
-        self.state=0
 
     def __str__(self):
         bandit_txt=''
         for dist_i in self.dists:
             bandit_txt+=str(dist_i)+'\n'	
-        return bandit_txt
-
-    def get_current_state(self):
-        return self.state
+        return bandit_txt   
 
     def get_actions(self):
         return range(len(self.dists))
 
     def get_states(self):
-        return [0]	
+        return [super.state]	
      
     def next_step(self,action_i):
         if(type(action_i)==int):
@@ -26,7 +30,6 @@ class MultiArmBandit(object):
         reward=float(self.dists[action_i]())
         return reward
 
-		
 class BinomialDist(object):
     def __init__(self,p=0.5,n=10):
         self.p=p
