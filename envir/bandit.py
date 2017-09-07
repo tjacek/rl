@@ -24,17 +24,6 @@ class MultiArmBandit(envir.Enviroment):
         reward=float(self.dists[action_i]())
         return reward
 
-class BinomialDist(object):
-    def __init__(self,p=0.5,n=10):
-        self.p=p
-        self.n=n
-
-    def __call__(self):        
-        return np.random.binomial(n=self.n,p=self.p)
-
-    def __str__(self):
-        return 'p:'+str(self.p)
-
 def make_binomial_bandit(n=10):
     params=[np.random.uniform()
                 for i in range(n)]

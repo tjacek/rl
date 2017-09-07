@@ -5,6 +5,9 @@ class MarkovChain(envir.Enviroment):
     def __init__(self,trans,start_state=0):
         super(MarkovChain, self).__init__(state=start_state)	
         self.trans=trans
+    
+    def __str__(self):
+        return str(self.trans)
 
     def get_actions(self):
         return range(self.trans.shape[0])
@@ -18,6 +21,7 @@ class MarkovChain(envir.Enviroment):
         old_state= self.get_current_state()
         dist_i=self.trans[old_state]
         new_state=np.random.choice(self.get_states(), None, p=dist_i)
+        print(new_state)
         self.state=new_state
         return float(new_state==action_i)
 
@@ -26,9 +30,3 @@ def make_markov_chain(n):
              for i in range(n)]
     trans=np.array(dists)
     return MarkovChain(trans)
-
-def get_distribution(n):
-    dist=np.random.rand(n)
-    c=sum(dist)
-    dist/=c
-    return dist
