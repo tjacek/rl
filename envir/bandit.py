@@ -19,8 +19,8 @@ class MultiArmBandit(envir.Enviroment):
         return [self.state] 
      
     def next_step(self,action_i):
-        if(type(action_i)==int):
-            return Exception('Action must be Integer')
+        if(not envir.is_int(action_i)):
+            raise envir.NonIntAction(action_i)
         reward=float(self.dists[action_i]())
         return reward
 

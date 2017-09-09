@@ -25,8 +25,9 @@ class Experiment(object):
 
 bandit=envir.markov.make_markov_chain(3)#bandit.make_binomial_bandit()
 q=q_learning.make_qfactor_lookup(bandit)
-alg=q_learning.QLearningAlg(q,0.9,0.5)
+alg=q_learning.QLearningAlg(q,0.9,0.1)
 exper=Experiment(bandit,alg)
 for i in range(5000):
     print(exper.next_step())
 print(bandit)
+print(q.q)

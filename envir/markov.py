@@ -17,8 +17,8 @@ class MarkovDP(object):
         return range(self.trans.shape[0])  
 
     def next_step(self,action_i):
-        if(type(action_i)==int):
-            return NonIntAction(action_i)
+        if(not envir.is_int(action_i)):
+            raise envir.NonIntAction(action_i)
         old_state= self.get_current_state()
         dist_i=self.trans[old_state]
         new_state=np.random.choice(self.get_states(), None, p=dist_i)
@@ -38,8 +38,8 @@ class MarkovChain(envir.Enviroment):
         return range(self.trans.shape[0])
 
     def next_step(self,action_i):
-        if(type(action_i)==int):
-            return NonIntAction(action_i)
+        if(not envir.is_int(action_i)):
+            raise envir.NonIntAction(action_i)
         old_state= self.get_current_state()
         dist_i=self.trans[old_state]
         new_state=np.random.choice(self.get_states(), None, p=dist_i)
