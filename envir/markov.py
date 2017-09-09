@@ -1,5 +1,27 @@
 import envir
 import numpy as np
+import utils
+
+class MarkovDP(object):
+    def __init__(self, trans,rewards):
+        self.trans = trans
+        self.rewards=rewards
+    
+    def __str__(self):
+        return str(self.trans)
+
+    def get_actions(self):
+        return range(self.trans.shape[2])
+
+    def get_states(self):
+        return range(self.trans.shape[0])  
+
+    def next_step(self,action_i):
+        if(type(action_i)==int):
+            return NonIntAction(action_i)
+        old_state= self.get_current_state()
+        dist_i=self.trans[old_state]
+        new_state=np.random.choice(self.get_states(), None, p=dist_i)
 
 class MarkovChain(envir.Enviroment):
     def __init__(self,trans,start_state=0):
@@ -17,7 +39,7 @@ class MarkovChain(envir.Enviroment):
 
     def next_step(self,action_i):
         if(type(action_i)==int):
-            return Exception('Action must be Integer')
+            return NonIntAction(action_i)
         old_state= self.get_current_state()
         dist_i=self.trans[old_state]
         new_state=np.random.choice(self.get_states(), None, p=dist_i)
@@ -26,7 +48,4 @@ class MarkovChain(envir.Enviroment):
         return float(new_state==action_i)
 
 def make_markov_chain(n):
-    dists=[ get_distribution(n)
-             for i in range(n)]
-    trans=np.array(dists)
-    return MarkovChain(trans)
+    return MarkovChain(utils.make_stoch_matrix(n))
