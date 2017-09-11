@@ -2,8 +2,9 @@ import envir
 import numpy as np
 import utils
 
-class MarkovDP(object):
+class MarkovDP(envir.Enviroment):
     def __init__(self, trans,rewards):
+        super(MarkovDP, self).__init__(state=0)
         self.trans = trans
         self.rewards=rewards
     
@@ -11,16 +12,16 @@ class MarkovDP(object):
         return str(self.trans)
 
     def get_actions(self):
-        return range(self.trans.shape[2])
+        return range(self.trans.shape[0])
 
     def get_states(self):
-        return range(self.trans.shape[0])  
+        return range(self.trans.shape[2])  
 
     def next_step(self,action_i):
         if(not envir.is_int(action_i)):
             raise envir.NonIntAction(action_i)
         old_state= self.get_current_state()
-        dist_i=self.trans[old_state]
+        dist_i=list(self.trans[action_i][old_state])
         new_state=np.random.choice(self.get_states(), None, p=dist_i)
         return self.rewards[old_state][new_state]
 

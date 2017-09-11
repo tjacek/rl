@@ -23,7 +23,7 @@ class Experiment(object):
             actions=self.envir.get_actions()
             return np.random.choice(actions)
 
-bandit=envir.markov.make_markov_chain(3)#bandit.make_binomial_bandit()
+bandit=envir.markov.make_markov_decision(3,5)#bandit.make_binomial_bandit()
 q=q_learning.make_qfactor_lookup(bandit)
 alg=q_learning.QLearningAlg(q,0.9,0.1)
 exper=Experiment(bandit,alg)
