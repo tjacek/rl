@@ -5,6 +5,15 @@ class Board(object):
 		self.true_state=true_state
 		self.known_state=np.zeros(true_state.shape)
 
+	def __str__(self):
+		char=np.full(self.true_state.shape,',',dtype=str)
+#		char.fill(',')
+		char[self.true_state==2]="#"
+		char= '\n'.join([''.join(row_i) 
+					for row_i in char])
+		raise Exception(char)
+		return char
+
 class Ship(object):
 	def __init__(self,position,size,direction):
 		self.position=position
@@ -39,12 +48,10 @@ def build_board(ships,x=16,y=16):
 			state[start_i[0]:end_i[0],start_i[0]]=2
 		else:
 			state[start_i[0],start_i[1]:end_i[1]]=2
-			
-		print(start_i)
-		print(end_i)
 	return Board(state)
+
+#def random_ships(n_ships=(4,3,3,2)):
 
 ships=[Ship((5,5),3,0),Ship((3,8),2,0),Ship((9,9),4,1)]
 board=build_board(ships)
-print(board.true_state)
-#print(ship.is_valid( (16,16)))
+print(str(board))
