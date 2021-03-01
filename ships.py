@@ -7,11 +7,9 @@ class Board(object):
 
 	def __str__(self):
 		char=np.full(self.true_state.shape,',',dtype=str)
-#		char.fill(',')
 		char[self.true_state==2]="#"
 		char= '\n'.join([''.join(row_i) 
 					for row_i in char])
-		raise Exception(char)
 		return char
 
 class Ship(object):
@@ -50,8 +48,22 @@ def build_board(ships,x=16,y=16):
 			state[start_i[0],start_i[1]:end_i[1]]=2
 	return Board(state)
 
-#def random_ships(n_ships=(4,3,3,2)):
+def random_ships(x=16,y=16,n_ships=(4,3,3,2)):
+	ships=[]
+	for size,n in enumerate(n_ships):
+		size+=1
+		for i in range(n):
+			direction=np.random.binomial(1, p=0.5)
+			if(direction):
+				bounds=[x-size,y]
+			else:
+				bounds=[x,y-size]
+			position=[np.random.randint(0, high=bound_j, dtype=int)
+						for bound_j in bounds]
+			ship_i=Ship(position,size,direction)
+			ships.append(ship_i)
+	return ships
 
-ships=[Ship((5,5),3,0),Ship((3,8),2,0),Ship((9,9),4,1)]
+ships=random_ships()
 board=build_board(ships)
 print(str(board))
