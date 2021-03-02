@@ -33,8 +33,26 @@ class CryingBaby(object):
 		p_as=self.prob[x,y]
 		return np.random.choice(self.get_states(), p=[p_as,1.0-p_as])
 
-#	def act(self,action_i):
+	def act(self,action_i):
+		if(self.state==InnerStates.HUNGRY):
+			if(action_i==Actions.FEED):
+				self.state=InnerStates.SATED
+		else:
+			if(action_i!=Actions.FEED):
+				if(np.random.choice([True,False], p=[0.1,0.9])):
+					self.state=InnerStates.HUNGRY
+		self.last_action=action_i
+		return self.compute_reward(action_i)
 
+	def compute_reward(self,action_i):
+		reward=0.0
+		if(self.state==InnerStates.HUNGRY):
+			reward-=10
+		if(action_i==Actions.FEED):
+			reward-=5
+		if(action_i==Actions.SING):
+			reward-=0.5
+		return reward
 
 baby=CryingBaby()
-print(baby.observe())
+print(baby.act(Actions.IGNORE))
