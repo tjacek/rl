@@ -1,37 +1,22 @@
 import numpy as np 
+import baby
 
-class QLearningAlg(object):
-    def __init__(self,q,alpha,gamma):
-        self.q=q
-        self.alpha=alpha 
-        self.gamma=gamma
-        
-    def update(self,state_i,action_i,r_i):
-        old_value=self.q(state_i,action_i)
-        new_value=old_value+ self.alpha*(r_i + self.gamma*self.q.max(state_i) - old_value)
-        self.q(state_i,action_i,new_value)
-
-class QFactorLookup(object):
-    def __init__(self,q):
-        self.q=q
-
-    def __call__(self,state_i,action_i,value=None):
-        if(value!=None):
-            self.q[state_i][action_i]=value
-        return self.q[state_i][action_i]
-
-    def max(self,state_i):
-        return max(self.q[state_i])
-
-    def best_action(self,state_i):
-        q_state=self.q[state_i].values()        
-        expected_values=np.array(q_state)
-        return np.argmax(expected_values)
-
-def make_qfactor_lookup(envir):
-    actions=envir.get_actions()
+def q_learn(envir,n_epochs=100,alpha=0.5,gamma=0.9):
     states=envir.get_states()
-    init_values={ state_i:{action_i:0.0 
-                            for action_i in actions}
-                                for state_i in states}
-    return QFactorLookup(init_values)
+    actions=envir.get_actions()
+    q=np.random.rand(len(states),len(actions))
+    rewards=[]
+    obs_i=envir.observe()
+    for i in range(n_epochs):
+        x=obs_i.value
+        y=np.argmax(q[x])
+        action_i=actions[y]
+        r_i=envir.act(action_i)
+        obs_i=envir.observe()
+        future=gamma*np.argmax(q[obs_i.value])
+        q[x,y]=(1-alpha)*q[x,y]+alpha*(r_i+future)
+        rewards.append(r_i)
+    return rewards
+
+envir=baby.CryingBaby()
+print(q_learn(envir))
