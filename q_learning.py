@@ -34,6 +34,7 @@ class QLearn(object):
     def best_action(self,state_i):
         return np.argmax(self.q[state_i.value])
 
-envir=baby.CryingBaby()
-q_learn=QLearn()
-print(q_learn(envir))
+if __name__ == "__main__":
+    envir=baby.CryingBaby()
+    q_learn=QLearn()
+    print(q_learn(envir))

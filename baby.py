@@ -1,4 +1,4 @@
-import numpy as np#,random
+import numpy as np
 from enum import Enum
 
 class InnerStates(Enum):
@@ -54,5 +54,6 @@ class CryingBaby(object):
 			reward-=0.5
 		return reward
 
-baby=CryingBaby()
-print(baby.act(Actions.IGNORE))
+if __name__ == "__main__":
+	baby=CryingBaby()
+	print(baby.act(Actions.IGNORE))

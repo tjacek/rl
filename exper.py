@@ -1,33 +1,15 @@
-import envir.bandit,envir.markov
-import q_learning
+import q_learning,baby
 import numpy as np
+import matplotlib.pyplot as plt
 
-class Experiment(object):
-    def __init__(self,envir,alg,epsi=0.1):
-        self.envir=envir
-        self.alg=alg
-        self.epsi=epsi
+def exper(n_epochs=100,window=30):
+    envir=baby.CryingBaby()
+    q_learn=q_learning.QLearn()
+    rewards=q_learn(envir,n_epochs)
+    rewards=np.array(rewards)
+    average=np.convolve(rewards,np.ones(window), 'valid') / window
+    plt.plot(average)
+    plt.ylabel('rewards')
+    plt.show()
 
-    def next_step(self):
-        state_i=self.envir.get_current_state()
-        action_i=self.select_action(state_i)
-        reward_i=self.envir.next_step(action_i)
-        self.alg.update(state_i,action_i,reward_i)
-        return (action_i,reward_i)
-
-    def select_action(self,state_i):
-        p=np.random.uniform()
-        if(p>self.epsi):
-            return self.alg.q.best_action(state_i)
-        else:
-            actions=self.envir.get_actions()
-            return np.random.choice(actions)
-
-bandit=envir.markov.make_markov_decision(3,5)#bandit.make_binomial_bandit()
-q=q_learning.make_qfactor_lookup(bandit)
-alg=q_learning.QLearningAlg(q,0.9,0.1)
-exper=Experiment(bandit,alg)
-for i in range(5000):
-    print(exper.next_step())
-print(bandit)
-print(q.q)
+exper()
