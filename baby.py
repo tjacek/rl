@@ -29,11 +29,13 @@ class CryingBaby(object):
 		return list(Actions)
 
 	def observe(self):
-		x,y=self.state.value,self.last_action.value
+		x,y=self.state.value,self.last_action.value		
 		p_as=self.prob[x,y]
 		return np.random.choice(self.get_states(), p=[p_as,1.0-p_as])
 
 	def act(self,action_i):
+		if(np.issubdtype(type(action_i),np.integer)):
+			action_i=Actions(action_i)
 		if(self.state==InnerStates.HUNGRY):
 			if(action_i==Actions.FEED):
 				self.state=InnerStates.SATED
@@ -54,6 +56,10 @@ class CryingBaby(object):
 			reward-=0.5
 		return reward
 
+	def reset(self):
+		self.state=InnerStates.SATED
+		self.last_action=Actions.IGNORE
+		
 if __name__ == "__main__":
 	baby=CryingBaby()
 	print(baby.act(Actions.IGNORE))

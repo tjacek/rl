@@ -26,6 +26,14 @@ class QLearn(object):
             rewards.append(r_i)
         return rewards
 
+    def no_learning(self,envir,n_epochs):
+        rewards=[]
+        for i in range(n_epochs):
+            obs_i=envir.observe()
+            action_i=self.best_action(obs_i)
+            rewards.append(envir.act(action_i))
+        return rewards
+
     def next_action(self,state_i):
         if(np.random.uniform()>self.eps):
             return self.best_action(state_i)
