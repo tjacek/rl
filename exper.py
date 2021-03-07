@@ -1,9 +1,9 @@
-import q_learning,envir.baby
+import q_learning,envir.baby,envir.bandit
 import numpy as np
 import matplotlib.pyplot as plt
 
 def exper(n_epochs=100,window=100):
-    exper_envir=envir.baby.CryingBaby()
+    exper_envir=envir.bandit.make_binomial_bandit()#CryingBaby()
     q_learn=q_learning.QLearn()
     mean_rewards=[]
     for i in range(n_epochs):

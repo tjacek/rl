@@ -1,13 +1,13 @@
 import numpy as np 
 import envir
 
-class MultiArmBandit(envir.Enviroment):
+class MultiArmBandit(object):
     def __init__(self,dists):
         self.last_action=0
         self.dists=dists
 
     def __str__(self):
-        return ",".join([ str(dist_i) for dist_i in self.dist] )  
+        return ",".join([ str(dist_i) for dist_i in self.dists] )  
 
     def get_actions(self):
         return range(len(self.dists))
@@ -15,10 +15,14 @@ class MultiArmBandit(envir.Enviroment):
     def get_states(self):
         return [0] 
     
-    def observe(self,action_i):
+    def observe(self):
         return 0
 
+    def reset(self):
+        return None
+
     def act(self,action_i):
+        print(action_i)
         return self.dists[action_i]()
 
 class BinomialDist(object):

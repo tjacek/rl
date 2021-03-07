@@ -16,7 +16,7 @@ class QLearn(object):
         rewards=[]
         obs_i=exper_envir.observe()
         for i in range(n_epochs):
-            x=obs_i.value
+            x=obs_i#.value
             y=self.next_action(obs_i)
             action_i=actions[y]
             r_i=exper_envir.act(action_i)
@@ -40,7 +40,7 @@ class QLearn(object):
         return np.random.randint(0,self.q.shape[1])
 
     def best_action(self,state_i):
-        return np.argmax(self.q[state_i.value])
+        return np.argmax(self.q[state_i])#.value])
 
 if __name__ == "__main__":
     exper_envir=envir.baby.CryingBaby()
