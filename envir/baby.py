@@ -23,10 +23,10 @@ class CryingBaby(object):
 		self.prob=np.array(prob)
 
 	def get_states(self):
-		return list(Observations)
+		return range(len(list(Observations)))
 
 	def get_actions(self):
-		return list(Actions)
+		return range(len(list(Actions)))
 
 	def observe(self):
 		x,y=self.state.value,self.last_action.value		
