@@ -31,7 +31,9 @@ class CryingBaby(object):
 	def observe(self):
 		x,y=self.state.value,self.last_action.value		
 		p_as=self.prob[x,y]
-		return np.random.choice(self.get_states(), p=[p_as,1.0-p_as])
+		if(np.random.uniform()<p_as):
+			return Observations.CRYING.value
+		return Observations.QUIET.value
 
 	def act(self,action_i):
 		if(np.issubdtype(type(action_i),np.integer)):
@@ -41,7 +43,7 @@ class CryingBaby(object):
 				self.state=InnerStates.SATED
 		else:
 			if(action_i!=Actions.FEED):
-				if(np.random.choice([True,False], p=[0.1,0.9])):
+				if(np.random.uniform()<0.1):
 					self.state=InnerStates.HUNGRY
 		self.last_action=action_i
 		return self.compute_reward(action_i)
