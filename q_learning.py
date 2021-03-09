@@ -5,24 +5,20 @@ class QLearn(object):
     def __init__(self,alpha=0.05,gamma=0.9,eps=0.1):
         self.alpha=alpha
         self.gamma=gamma
-        self.eps=eps
+        self.policy=EpsilonGreedy(eps)
         self.q=None
 
     def __call__(self,exper_envir,n_epochs=100):
-        states=exper_envir.get_states()
-        actions=exper_envir.get_actions()
         if(self.q is None):
-            self.q=np.random.rand(len(states),len(actions))
+            self.q=np.random.rand(exper_envir.get_states(),exper_envir.get_actions() )
         rewards=[]
         obs_i=exper_envir.observe()
         for i in range(n_epochs):
-            x=obs_i#.value
-            y=self.next_action(obs_i)
-            action_i=actions[y]
-            r_i=exper_envir.act(action_i)
+            act_i= self.policy(obs_i,self.q)
+            r_i=exper_envir.act(act_i)
             obs_i=exper_envir.observe()
-            future=self.gamma*self.best_action(obs_i)  #np.argmax(q[obs_i.value])
-            self.q[x,y]=(1-self.alpha)*self.q[x,y]+self.alpha*(r_i+future)
+            future=self.gamma*best_action(obs_i,self.q)
+            self.q[obs_i,act_i]=(1-self.alpha)*self.q[obs_i,act_i]+self.alpha*(r_i+future)
             rewards.append(r_i)
         return rewards
 
@@ -30,17 +26,21 @@ class QLearn(object):
         rewards=[]
         for i in range(n_epochs):
             obs_i=exper_envir.observe()
-            action_i=self.best_action(obs_i)
+            action_i=best_action(obs_i,self.q)
             rewards.append(exper_envir.act(action_i))
         return rewards
+        
+class EpsilonGreedy(object):
+    def __init__(self,eps):
+        self.eps=eps
 
-    def next_action(self,state_i):
+    def __call__(self,state_i,q):
         if(np.random.uniform()>self.eps):
-            return self.best_action(state_i)
-        return np.random.randint(0,self.q.shape[1])
+            return best_action(state_i,q)
+        return np.random.randint(0,q.shape[1])
 
-    def best_action(self,state_i):
-        return np.argmax(self.q[state_i])#.value])
+def best_action(state_i,q):
+    return np.argmax(q[state_i])
 
 if __name__ == "__main__":
     exper_envir=envir.baby.CryingBaby()
