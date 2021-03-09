@@ -23,11 +23,11 @@ class CryingBaby(object):
 		self.prob=np.array(prob)
 
 	def get_states(self):
-		return len(Observations) #range(len(Observations))
+		return len(Observations)
 
 	def get_actions(self):
-		return len(Actions)#range(len(Actions))
-
+		return len(Actions)
+		
 	def observe(self):
 		x,y=self.state.value,self.last_action.value		
 		p_as=self.prob[x,y]
@@ -57,10 +57,6 @@ class CryingBaby(object):
 		if(action_i==Actions.SING):
 			reward-=0.5
 		return reward
-
-	def reset(self):
-		self.state=InnerStates.SATED
-		self.last_action=Actions.IGNORE
 		
 if __name__ == "__main__":
 	baby=CryingBaby()

@@ -10,16 +10,13 @@ class MultiArmBandit(object):
         return ",".join([ str(dist_i) for dist_i in self.dists] )  
 
     def get_actions(self):
-        return len(self.dists)#range(len(self.dists))
+        return len(self.dists)
 
     def get_states(self):
         return 1#[0] 
     
     def observe(self):
         return 0
-
-    def reset(self):
-        return None
 
     def act(self,action_i):
         print(action_i)
