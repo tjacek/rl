@@ -40,12 +40,23 @@ class EpsilonGreedy(object):
         self.eps*=self.discount
         return np.random.randint(0,q.shape[1])
 
+class Boltzmann(object):
+    def __init__(self, T=0.6):
+        self.T=T
+    
+    def __call__(self,state_i,q):
+        dist=np.exp(q[state_i]/self.T)
+        dist=dist/np.sum(dist)
+        a=range(q.shape[1])
+#        raise Exception(a)
+        return np.random.choice(a,None,True,dist)
+
 def best_action(state_i,q):
     return np.argmax(q[state_i])
 
 def make_simulation():
     update=QLearn()
-    policy=EpsilonGreedy(0.9)
+    policy=Boltzmann() #EpsilonGreedy(0.9)
     return Simulation(policy,update)
 
 if __name__ == "__main__":
