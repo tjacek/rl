@@ -11,12 +11,13 @@ class Simulation(object):
         if(self.model is None):
             self.model=np.random.rand(s_envir.get_states(),s_envir.get_actions())
         rewards=[]
-        obs_i=s_envir.observe()
+        old_state=s_envir.observe()
         for i in range(n_epochs):
-            act_i= self.policy(obs_i,self.model)
+            act_i= self.policy(old_state,self.model)
             r_i=s_envir.act(act_i)
-            obs_i=s_envir.observe()
-            self.update(obs_i,act_i, r_i,self.model)
+            next_state=s_envir.observe()
+            self.update(old_state,next_state,act_i,r_i,self.model)
+            old_state=next_state
             rewards.append(r_i)
         return np.array(rewards)
 
@@ -25,10 +26,19 @@ class QLearn(object):
         self.alpha=alpha
         self.gamma=gamma
 
-    def __call__(self,obs_i,act_i, r_i,q):
-        future=self.gamma*best_action(obs_i,q)
-        q[obs_i,act_i]=(1-self.alpha)*q[obs_i,act_i]+self.alpha*(r_i+future)
+    def __call__(self,old_state,next_state,act_i, r_i,q):
+        future=self.gamma*max(q[next_state,:])
+        q[old_state,act_i]=(1-self.alpha)*q[old_state,act_i]+self.alpha*(r_i+future)
         
+class Sarsa(object):
+    def __init__(self,alpha=0.05,gamma=0.9):
+        self.alpha=alpha
+        self.gamma=gamma
+        
+    def __call__(self,old_state,next_state,act_i, r_i,q):
+        future=self.gamma*Q[next_state,act_i]
+        q[obs_i,act_i]=(1-self.alpha)*q[obs_i,act_i]+self.alpha*(r_i+future)
+
 class EpsilonGreedy(object):
     def __init__(self,eps,discount=0.9):
         self.eps=eps
@@ -48,7 +58,6 @@ class Boltzmann(object):
         dist=np.exp(q[state_i]/self.T)
         dist=dist/np.sum(dist)
         a=range(q.shape[1])
-#        raise Exception(a)
         return np.random.choice(a,None,True,dist)
 
 def best_action(state_i,q):
@@ -56,10 +65,10 @@ def best_action(state_i,q):
 
 def make_simulation():
     update=QLearn()
-    policy=Boltzmann() #EpsilonGreedy(0.9)
+    policy=EpsilonGreedy(0.9)
     return Simulation(policy,update)
 
 if __name__ == "__main__":
     exper_envir=envir.baby.CryingBaby()
-    q_learn=QLearn()
+    q_learn=Sarsa()
     print(q_learn(exper_envir))
