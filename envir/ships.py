@@ -4,6 +4,11 @@ class Board(object):
 	def __init__(self,true_state):
 		self.true_state=true_state
 		self.known_state=np.zeros(true_state.shape)
+    
+    def act(self,cord)
+        if(self.known_state[cord]!=0):
+            raise Exception("used state")
+        return self.true_state[cord]
 
 	def __str__(self):
 		char=np.full(self.true_state.shape,',',dtype=str)
