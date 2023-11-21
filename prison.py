@@ -7,6 +7,9 @@ class Game(object):
         		             [-3,-2]])
         self.payoff=payoff	
 
+    def n_actions(self):
+        return self.payoff.shape[0]
+    
     def play(self,strategy_a,strategy_b,n_iters):
     	payoff_a,payoff_b=0.0,0.0
     	for iter_i in range(n_iters):
@@ -21,7 +24,8 @@ class Game(object):
 class Tournament(object):
     def __init__(self,game,strategies):
         self.game=game
-        self.strategies=strategies
+        self.strategies=[ strategy_i(self.gmae)
+                for strategy_i in strategies]
 
     def __call__(self,n_iters):
         score_dict={}
@@ -36,9 +40,19 @@ class Tournament(object):
                 score_dict[str(strategy_i)]=payoff_a
                 score_dict[str(strategy_j)]=payoff_b
         return score_dict
-         
-class Tic(object):
-    def __init__(self):
+
+class Strategy(object):
+    def __init__(self,game):
+        pass
+
+    def get_action(self,iter_i):
+        return 0
+
+    def update(self,action_i):
+        pass
+
+class Tic(Strategy):
+    def __init__(self,game):
         self.prev=None
 
     def get_action(self,iter_i):
@@ -49,27 +63,29 @@ class Tic(object):
     def update(self,action_i):
         self.prev=action_i	
 
-    def __init__(self):
+    def __str__(self):
         return "Tic"
 
-class UnCoperation(object):
-
+class UnCoperation(Strategy):
     def get_action(self,iter_i):
         return 0
 
-    def update(self,action_i):
-        pass 
-
-    def __init__(self):
+    def __str__(self):
         return "Cu"
 
-class UnDefection(object):
-
+class UnDefection(Strategy):
     def get_action(self,iter_i):
         return 1
 
-    def update(self,action_i):
-        pass 
-
-    def __init__(self):
+    def __str__(self):
         return "Du"
+
+class Random(Strategy):
+    def __init__(self,game):
+        self.n_actions=game.n_actions()
+    
+    def get_action(self,iter_i):
+        return np.random.randint(self.n_actions)
+
+    def __str__(self):
+        return "Random"
