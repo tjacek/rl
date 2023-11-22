@@ -11,9 +11,9 @@ class Game(object):
         return self.payoff.shape[0]
     
     def play(self,strategy_a,strategy_b,n_iters):
-    	payoff_a,payoff_b=0.0,0.0
-    	for iter_i in range(n_iters):
-    		a_i=strategy_a.get_action(iter_i)
+        payoff_a,payoff_b=0.0,0.0
+        for iter_i in range(n_iters):
+            a_i=strategy_a.get_action(iter_i)
             b_i=strategy_b.get_action(iter_i)
             strategy_a.update(b_i)
             strategy_b.update(a_i)
@@ -22,13 +22,17 @@ class Game(object):
         return payoff_a,payoff_b
 
 class Tournament(object):
-    def __init__(self,game,strategies):
+    def __init__(self,game=None,strategies=None):
+        if(game is None):
+            game=Game()        
+        if(strategies is None):
+            strategies=[Tic,UnCoperation,UnDefection,Random]
         self.game=game
-        self.strategies=[ strategy_i(self.gmae)
+        self.strategies=[ strategy_i(self.game)
                 for strategy_i in strategies]
 
     def __call__(self,n_iters):
-        score_dict={}
+        score_dict,pairwise={},[]
         n_players=len(self.strategies)
         for i in range(n_players):
             for j in range(i,n_players):
@@ -39,7 +43,9 @@ class Tournament(object):
                                                  n_iters=n_iters)
                 score_dict[str(strategy_i)]=payoff_a
                 score_dict[str(strategy_j)]=payoff_b
-        return score_dict
+                pairwise.append((str(strategy_i),payoff_a,
+                                 str(strategy_j),payoff_b))
+        return score_dict,pairwise
 
 class Strategy(object):
     def __init__(self,game):
@@ -56,8 +62,8 @@ class Tic(Strategy):
         self.prev=None
 
     def get_action(self,iter_i):
-    	if(iter_i==0):
-    		return 0
+        if(iter_i==0):
+    	    return 0
         return self.prev
 
     def update(self,action_i):
@@ -82,6 +88,7 @@ class UnDefection(Strategy):
 
 class Random(Strategy):
     def __init__(self,game):
+#        raise Exception(game)
         self.n_actions=game.n_actions()
     
     def get_action(self,iter_i):
@@ -89,3 +96,9 @@ class Random(Strategy):
 
     def __str__(self):
         return "Random"
+
+if __name__ == "__main__":
+   tour=Tournament()
+   result_dict,pairwise=tour(10)
+   print(pairwise)
+   print(result_dict)
