@@ -1,25 +1,39 @@
 import numpy as np
 
 class Game(object):
-    def __init__(self,payoff=None):
-        if(payoff is None):
-        	payoff=np.array([[-1,0],
-        		             [-3,-2]])
-        self.payoff=payoff	
+    def __init__(self,payoff_a=None,payoff_b=None):
+        self.payoff_a=payoff_a	
+        self.payoff_b=payoff_b
 
     def n_actions(self):
-        return self.payoff.shape[0]
+        return self.payoff_a.shape[0]
     
     def play(self,strategy_a,strategy_b,n_iters):
-        payoff_a,payoff_b=0.0,0.0
+        value_a,value_b=0.0,0.0
         for iter_i in range(n_iters):
             a_i=strategy_a.get_action(iter_i)
             b_i=strategy_b.get_action(iter_i)
             strategy_a.update(b_i)
             strategy_b.update(a_i)
-            payoff_a+=self.payoff[a_i][b_i]
-            payoff_b+=self.payoff[b_i][a_i]
-        return payoff_a,payoff_b
+            value_a+=self.payoff_a[a_i][b_i]
+            value_b+=self.payoff_b[b_i][a_i]
+        return value_a/n_iters,value_b/n_iters
+
+def prisoner_dillema():    
+    payoff_a=np.array([[4,5],
+                       [1,2]])
+    payoff_b=np.array([[4,1],
+                       [5,2]])
+    return Game(payoff_a=payoff_a,
+                payoff_b=payoff_b)
+
+def battle_of_sexes():
+    payoff_a=np.array([[5,1],
+                       [2,6]])
+    payoff_b=np.array([[6,1],
+                       [2,5]])
+    return Game(payoff_a=payoff_a,
+                payoff_b=payoff_b)
 
 class Tournament(object):
     def __init__(self,game=None,strategies=None):
@@ -88,7 +102,6 @@ class UnDefection(Strategy):
 
 class Random(Strategy):
     def __init__(self,game):
-#        raise Exception(game)
         self.n_actions=game.n_actions()
     
     def get_action(self,iter_i):
@@ -98,7 +111,8 @@ class Random(Strategy):
         return "Random"
 
 if __name__ == "__main__":
-   tour=Tournament()
+   game= battle_of_sexes()
+   tour=Tournament(game)
    result_dict,pairwise=tour(10)
    print(pairwise)
    print(result_dict)
