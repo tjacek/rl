@@ -7,7 +7,12 @@ class Game(object):
 
     def n_actions(self):
         return self.payoff_a.shape[0]
-    
+
+    def zero_sum(self):
+        payoff_sum=self.payoff_a+self.payoff_b
+        value=payoff_sum[0][0]
+        return np.all(payoff_sum == value)
+
     def play(self,strategy_a,strategy_b,n_iters):
         value_a,value_b=0.0,0.0
         for iter_i in range(n_iters):
