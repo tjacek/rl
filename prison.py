@@ -13,6 +13,10 @@ class Game(object):
         value=payoff_sum[0][0]
         return np.all(payoff_sum == value)
 
+    def minmax(self):
+        u=np.argmin(self.payoff_a,axis=1)
+        return np.argmax(u)
+
     def play(self,strategy_a,strategy_b,n_iters):
         value_a,value_b=0.0,0.0
         for iter_i in range(n_iters):
@@ -116,8 +120,9 @@ class Random(Strategy):
         return "Random"
 
 if __name__ == "__main__":
-   game= battle_of_sexes()
-   tour=Tournament(game)
-   result_dict,pairwise=tour(10)
-   print(pairwise)
-   print(result_dict)
+    game= prisoner_dillema()
+    print(game.minmax())
+#   tour=Tournament(game)
+#   result_dict,pairwise=tour(10)
+#   print(pairwise)
+#   print(result_dict)
