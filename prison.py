@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.optimize import linprog
 
 class Game(object):
     def __init__(self,payoff_a=None,payoff_b=None):
@@ -27,6 +28,7 @@ class Game(object):
             value_a+=self.payoff_a[a_i][b_i]
             value_b+=self.payoff_b[b_i][a_i]
         return value_a/n_iters,value_b/n_iters
+
 
 def prisoner_dillema():    
     payoff_a=np.array([[4,5],
@@ -79,6 +81,17 @@ class Strategy(object):
 
     def update(self,action_i):
         pass
+
+class MixedStrategy(object):
+    def __init__(self,p):
+        self.p=p
+
+    def get_action(self,iter_i):
+        return np.random.choice(a=len(self.p), 
+                                p=self.p)
+
+    def __str__(self):
+        return "Mixed"
 
 class Tic(Strategy):
     def __init__(self,game):
