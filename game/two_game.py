@@ -1,4 +1,5 @@
 import numpy as np
+import core
 
 class TwoPlayer(object):
     def __init__(self,payoff=None):
@@ -18,7 +19,7 @@ class TwoPlayer(object):
             value_b+=self.payoff_b[b_i][a_i]
         return value_a/n_iters,value_b/n_iters
 
-class MixedStrategy(object):
+class MixedStrategy(core.Strategy):
     def __init__(self,p):
         self.p=p
 
