@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.optimize import linprog
 import core
 
 class TwoPlayer(object):
@@ -37,3 +38,14 @@ class NashEquilib(object):
     def __init__(self,q,p):
         self.p=p
         self.q=q
+
+def find_equil(game):
+    n_actions=game.n_actions()
+    p=0.5*np.ones((n_actions))
+    q=0.5*np.ones((n_actions))
+    result=linprog(c=p, 
+                   A_ub=None, 
+                   b_ub=None, 
+                   A_eq=numpy.identity(n_actions), 
+                   b_eq=None, 
+                   bounds=(0.0,1.0), 
