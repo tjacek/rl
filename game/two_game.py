@@ -34,17 +34,18 @@ class MixedStrategy(core.Strategy):
     def __str__(self):
         return "Mixed"
 
+    def find_best(self):
+
 class NashEquilib(object):
     def __init__(self,q,p):
         self.p=p
         self.q=q
 
-def find_equil(game):
+def find_equil(game,q):
     n_actions=game.n_actions()
-    p=0.5*np.ones((n_actions))
-    q=0.5*np.ones((n_actions))
+    A_ub= q @ game.payoff
     result=linprog(c=p, 
-                   A_ub=None, 
+                   A_ub= q @ A, 
                    b_ub=None, 
                    A_eq=numpy.identity(n_actions), 
                    b_eq=None, 
