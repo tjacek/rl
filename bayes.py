@@ -1,5 +1,13 @@
 import numpy as np
 
+class Assig(dict):
+    def __init__(self, arg=[]):
+        super(Assig, self).__init__(arg)
+
+    def select(self,variables):
+    	return Assig({var_i.name:self[var_i.name]
+    		        for var_i in variables})
+
 class BayesNets(object):
     def __init__(self,variables):
         self.variables=variables
@@ -16,6 +24,7 @@ class Factor(object):
 
     def variable_names(self):
         return [var_i.name for var_i in self.variables]
+
 
 X=Variable(name='X', 
 	       domian=2)
