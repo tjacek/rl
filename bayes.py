@@ -8,9 +8,19 @@ class Assig(dict):
     	return Assig({var_i.name:self[var_i.name]
     		        for var_i in variables})
 
+class SimpleDiGraph(object):
+    def __init__(self,n_nodes:int):
+        self.near=[[] for i in range(n_nodes)]
+
+    def add_edge(self,start,end):
+        self.near[start].append(end)
+   
 class BayesNets(object):
-    def __init__(self,variables):
+    def __init__(self,variables,graph=None):
+    	if(graph is None):
+    		graph=SimpleDiGraph(len(variables))
         self.variables=variables
+        self.graph=graph
 
 class Variable(object):
 	def __init__(self,name:str,domian:str):
