@@ -44,10 +44,15 @@ def get_factor(variables,pairs):
     names={var_i.name:i for i,var_i in enumerate(variables)}
     dims=tuple([var_i.domian for var_i in variables])
     array=np.zeros(dims)
+    def helper(dict_i):
+        cord= [0 for i in dims]
+        for key_i,value_i in names.items():
+            k=names[key_i]
+            cord[k]=value_i
+        return tuple(cord)
     for dict_i,p_i in pairs:
-        id_i=[ (names[key_i],value_i) 
-                for key_i,value_i in dict_i.items()]
-#        array[]=p_i
+        cord=helper(dict_i)
+        array[cord]=p_i
     return Factor(variables=variables, 
                   table=FactorTable(array)) 
 
