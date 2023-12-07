@@ -36,12 +36,28 @@ class Factor(object):
     def variable_names(self):
         return [var_i.name for var_i in self.variables]
 
-    def marginalize(self,name:str):
-        pass
+    def in_scope(self,name):
+        return any([ var_i.name==name 
+                for var_i in self.variables])      
+
+    def condition(self,name):
+        if(not select.in_scope(name)):
+            return self
 
 class FactorTable(object):
-    def __init__(self,array):
+    def __init__(self,names,array):
+        self.names=names
         self.array=array
+
+    def iter(self):
+        for index, p_i in np.ndenumerate(self.array):
+            assig_i={ self.name[i]:i
+                        for i in index}
+            yield Assig(assig_i),p_i
+    
+    def marginalize(self,name_i:str):
+        i=self.names[name_i]
+        return np.sum(self.array,axis=i)
 
 def get_factor(variables,pairs):
     names={var_i.name:i for i,var_i in enumerate(variables)}
