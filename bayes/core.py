@@ -40,9 +40,15 @@ class Factor(object):
         return any([ var_i.name==name 
                 for var_i in self.variables])      
 
-    def condition(self,name):
+    def condition(self,name,value):
         if(not select.in_scope(name)):
             return self
+        pairs=[]
+        for assig_i,p_i in self.table.iter():
+            if(assig_i[name]==value):
+                pairs.append((assig_i,p_i))
+        vars=[var_i for var_i in self.variables
+                if(var_i.name==name)]
 
 class FactorTable(object):
     def __init__(self,names,array):
