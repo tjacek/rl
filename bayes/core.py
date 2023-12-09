@@ -50,15 +50,27 @@ class Factor(object):
         vars=[var_i for var_i in self.variables
                 if(var_i.name==name)]
 
+    def __str__(self):
+        names=self.variable_names()
+        s=''
+        for assig_i,p_i in self.table.iter():
+            desc=[ f'{name_i}={assig_i[name_i]}' 
+                     for name_i in names]
+            desc=','.join(desc)
+            s+=f'{desc},{p_i}\n' 
+        return s
+
 class FactorTable(object):
     def __init__(self,names,array):
         self.names=names
         self.array=array
 
     def iter(self):
+        rev_names={i:name_i 
+                for name_i,i in self.names.items()}
         for index, p_i in np.ndenumerate(self.array):
-            assig_i={ self.name[i]:i
-                        for i in index}
+            assig_i={rev_names[dim_i]:value_i
+                        for dim_i,value_i in enumerate(index)}
             yield Assig(assig_i),p_i
     
     def marginalize(self,name_i:str):
@@ -79,10 +91,11 @@ def get_factor(variables,pairs):
         cord=helper(dict_i)
         array[cord]=p_i
     return Factor(variables=variables, 
-                  table=FactorTable(array)) 
+                  table=FactorTable(names=names,
+                                    array=array)) 
 
 
 def factor_product(phi:Factor,psi:Factor):
     phi_names=phi.variable_names()
     phi_names=phi.variable_names()
-    FactorTable(object)
+#    FactorTable(object)
