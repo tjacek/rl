@@ -83,7 +83,7 @@ def get_factor(variables,pairs):
     array=np.zeros(dims)
     def helper(dict_i):
         cord= [0 for i in dims]
-        for key_i,value_i in names.items():
+        for key_i,value_i in dict_i.items():
             k=names[key_i]
             cord[k]=value_i
         return tuple(cord)
