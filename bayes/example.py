@@ -32,3 +32,4 @@ bn=BayesNet(variables=vars,
 	        graph=graph)
 
 print(factors[0])
+print(factors[0].condition('E',1))

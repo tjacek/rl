@@ -24,9 +24,12 @@ class BayesNet(object):
         self.graph=graph
 
 class Variable(object):
-	def __init__(self,name:str,domian:int):
-		self.name=name
-		self.domian=domian
+    def __init__(self,name:str,domian:int):
+        self.name=name
+        self.domian=domian
+
+    def __str__(self):
+        return self.name
 
 class Factor(object):
     def __init__(self,variables:list,table):
@@ -41,14 +44,17 @@ class Factor(object):
                 for var_i in self.variables])      
 
     def condition(self,name,value):
-        if(not select.in_scope(name)):
+        if(not self.in_scope(name)):
             return self
         pairs=[]
         for assig_i,p_i in self.table.iter():
             if(assig_i[name]==value):
-                pairs.append((assig_i,p_i))
-        vars=[var_i for var_i in self.variables
-                if(var_i.name==name)]
+                new_assig_i= assig_i.copy()
+                del new_assig_i[name]
+                pairs.append((new_assig_i,p_i))
+        variables=[var_i for var_i in self.variables
+                        if(var_i.name!=name)]
+        return get_factor(variables,pairs)
 
     def __str__(self):
         names=self.variable_names()
