@@ -4,6 +4,12 @@ class Assig(dict):
     def __init__(self, arg=[]):
         super(Assig, self).__init__(arg)
 
+    def get_id(self):
+        names=list(self.keys())
+        names.sort()
+        return ''.join([str(self[name_i]) 
+                    for name_i in names]) 
+
     def select(self,variables):
     	return Assig({var_i.name:self[var_i.name]
     		        for var_i in variables})
@@ -66,6 +72,23 @@ class Factor(object):
             s+=f'{desc},{p_i}\n' 
         return s
 
+    def marginalize(self,name:str):
+        values,prob={},{}
+        for assig_i,p_i in self.table.iter():
+            new_assig_i= Assig(assig_i.copy())
+            del new_assig_i[name]
+            id_i=new_assig_i.get_id()
+            values[id_i]=new_assig_i
+            if(id_i in prob):
+                prob[id_i]=prob[id_i]+p_i
+            else:
+                prob[id_i]=0.0
+        variables=[var_i for var_i in self.variables
+                    if(var_i.name!=name)]
+        pairs=[ (values[id_i],prob[id_i]) 
+                    for id_i in prob]
+        return get_factor(variables,pairs)
+
 class FactorTable(object):
     def __init__(self,names,array):
         self.names=names
@@ -78,10 +101,6 @@ class FactorTable(object):
             assig_i={rev_names[dim_i]:value_i
                         for dim_i,value_i in enumerate(index)}
             yield Assig(assig_i),p_i
-    
-    def marginalize(self,name_i:str):
-        i=self.names[name_i]
-        return np.sum(self.array,axis=i)
 
 def get_factor(variables,pairs):
     names={var_i.name:i for i,var_i in enumerate(variables)}
