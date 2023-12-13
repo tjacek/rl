@@ -61,7 +61,7 @@ class Factor(object):
         variables=[var_i for var_i in self.variables
                         if(var_i.name!=name)]
         return get_factor(variables,pairs)
-
+    
     def __str__(self):
         names=self.variable_names()
         s=''
@@ -73,26 +73,35 @@ class Factor(object):
         return s
 
     def marginalize(self,name:str):
-        values,prob={},{}
+        variables=[var_i for var_i in self.variables
+                    if(var_i.name!=name)]
+        factor_table=get_factor(variables=variables)
         for assig_i,p_i in self.table.iter():
             new_assig_i= Assig(assig_i.copy())
             del new_assig_i[name]
-            id_i=new_assig_i.get_id()
-            values[id_i]=new_assig_i
-            if(id_i in prob):
-                prob[id_i]=prob[id_i]+p_i
-            else:
-                prob[id_i]=0.0
-        variables=[var_i for var_i in self.variables
-                    if(var_i.name!=name)]
-        pairs=[ (values[id_i],prob[id_i]) 
-                    for id_i in prob]
-        return get_factor(variables,pairs)
+            p_current=factor_table.get(new_assig_i)
+            factor_table.set(new_assig_i,p_current+p_i)
+        return Factor(variables=variables,
+                      table=factor_table)
 
 class FactorTable(object):
     def __init__(self,names,array):
         self.names=names
         self.array=array
+    
+    def get(self,assig_i):
+        index=self.to_index(assig_i)
+        return self.array[index]
+
+    def set(self,assig_i,p_i):
+        index=self.to_index(assig_i)
+        self.array[index]=p_i
+
+    def to_index(self,assig_i):
+        index=[0 for i in self.names]
+        for name_i,value_i in assig_i.items():
+            index[self.names[name_i]]=value_i
+        return tuple(index)
 
     def iter(self):
         rev_names={i:name_i 
@@ -102,10 +111,13 @@ class FactorTable(object):
                         for dim_i,value_i in enumerate(index)}
             yield Assig(assig_i),p_i
 
-def get_factor(variables,pairs):
+def get_factor(variables,pairs=None):
     names={var_i.name:i for i,var_i in enumerate(variables)}
     dims=tuple([var_i.domian for var_i in variables])
     array=np.zeros(dims)
+    if(pairs is None):
+        return FactorTable(names=names,
+                           array=array)
     def helper(dict_i):
         cord= [0 for i in dims]
         for key_i,value_i in dict_i.items():
