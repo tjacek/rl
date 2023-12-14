@@ -4,11 +4,11 @@ class Assig(dict):
     def __init__(self, arg=[]):
         super(Assig, self).__init__(arg)
 
-    def get_id(self):
-        names=list(self.keys())
-        names.sort()
-        return ''.join([str(self[name_i]) 
-                    for name_i in names]) 
+#    def get_id(self):
+#        names=list(self.keys())
+#        names.sort()
+#        return ''.join([str(self[name_i]) 
+#                    for name_i in names]) 
 
     def select(self,variables):
     	return Assig({var_i.name:self[var_i.name]
@@ -84,6 +84,12 @@ class Factor(object):
         return Factor(variables=variables,
                       table=factor_table)
 
+    def normalize(self):
+        z=sum([p_i for assig_i,p_i in self.table.iter()])
+        for assig_i,p_i in self.table.iter():
+            self.self(assig_i,p_i/z)
+        return self
+
 class FactorTable(object):
     def __init__(self,names,array):
         self.names=names
@@ -130,7 +136,6 @@ def get_factor(variables,pairs=None):
     return Factor(variables=variables, 
                   table=FactorTable(names=names,
                                     array=array)) 
-
 
 def factor_product(phi:Factor,psi:Factor):
     phi_names=phi.variable_names()
