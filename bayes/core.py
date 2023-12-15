@@ -1,14 +1,9 @@
 import numpy as np
+import itertools
 
 class Assig(dict):
     def __init__(self, arg=[]):
         super(Assig, self).__init__(arg)
-
-#    def get_id(self):
-#        names=list(self.keys())
-#        names.sort()
-#        return ''.join([str(self[name_i]) 
-#                    for name_i in names]) 
 
     def select(self,variables):
     	return Assig({var_i.name:self[var_i.name]
@@ -33,6 +28,9 @@ class Variable(object):
     def __init__(self,name:str,domian:int):
         self.name=name
         self.domian=domian
+
+    def all_values(self):
+        return list(range(self.domian))
 
     def __str__(self):
         return self.name
@@ -69,7 +67,7 @@ class Factor(object):
             desc=[ f'{name_i}={assig_i[name_i]}' 
                      for name_i in names]
             desc=','.join(desc)
-            s+=f'{desc},{p_i}\n' 
+            s+=f'{desc},{p_i:.4f}\n' 
         return s
 
     def marginalize(self,name:str):
@@ -136,6 +134,13 @@ def get_factor(variables,pairs=None):
     return Factor(variables=variables, 
                   table=FactorTable(names=names,
                                     array=array)) 
+
+def all_assig(variables):
+    all_values= [ [(var_i.name,value_j) 
+                    for value_j in var_i.all_values()] 
+                        for var_i in variables]
+    return [ Assig(dict(value_i))
+                for value_i in itertools.product(*all_values)]
 
 def factor_product(phi:Factor,psi:Factor):
     phi_names=phi.variable_names()

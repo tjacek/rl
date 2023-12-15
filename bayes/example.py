@@ -30,23 +30,3 @@ vars=[B, S, E, D, C]
 #bn=BayesNet(variables=vars,
 #	        factors=factors,
 #	        graph=graph)
-
-X=Variable(name='X',
-	       domian=2)
-Y=Variable(name='Y',
-	       domian=2)
-Z=Variable(name='Z',
-	       domian=2)
-
-factor=get_factor(variables=[X,Y,Z],
-	              pairs=[({'X':0,'Y':0,'Z':0},0.08),
-	                     ({'X':0,'Y':0,'Z':1},0.31),
-	                     ({'X':0,'Y':1,'Z':0},0.09),
-	                     ({'X':0,'Y':1,'Z':1},0.37),
-	                     ({'X':1,'Y':0,'Z':0},0.01),
-	                     ({'X':1,'Y':0,'Z':1},0.05),
-	                     ({'X':1,'Y':1,'Z':0},0.02),
-	                     ({'X':1,'Y':1,'Z':1},0.07), ])
-
-print(factor)
-print(factor.marginalize('Y'))
