@@ -20,16 +20,18 @@ def marg_test():
     print(factor)
     print(factor.marginalize('Y'))
 
-phi1=get_factor(variables=[X,Y],
+phi=get_factor(variables=[X,Y],
 	              pairs=[({'X':0,'Y':0},0.3),
 	                     ({'X':0,'Y':1},0.4),
 	                     ({'X':1,'Y':0},0.2),
 	                     ({'X':1,'Y':1},0.1)])
 
-phi2=get_factor(variables=[Y,Z],
+psi=get_factor(variables=[Y,Z],
 	              pairs=[({'Y':0,'Z':0},0.2),
 	                     ({'Y':0,'Z':1},0.0),
 	                     ({'Y':1,'Z':0},0.3),
 	                     ({'Y':1,'Z':1},0.5)])
 
-all_assig(phi1.variables)
+#all_assig(phi1.variables)
+product= factor_product(phi,psi)
+print(product)

@@ -143,6 +143,22 @@ def all_assig(variables):
                 for value_i in itertools.product(*all_values)]
 
 def factor_product(phi:Factor,psi:Factor):
-    phi_names=phi.variable_names()
-    phi_names=phi.variable_names()
-#    FactorTable(object)
+    phi_names=set(phi.variable_names())
+    psi_names=set(psi.variable_names())
+    shared = phi_names.intersection(psi_names)
+    psi_only =psi_names - phi_names
+    psi_only=[var_i for var_i in psi.variables
+                if(var_i.name in psi_only)]
+    product_variables=phi.variables +psi_only
+    table=get_factor(variables=product_variables)
+    for phi_assig,phi_p in phi.table.iter():
+        for a_i in all_assig(psi_only):
+            a_i=Assig({**phi_assig,**a_i})
+            if(psi.variables):
+                psi_assig=a_i.select(psi.variables)
+            else:
+                psi_assig=Assig()
+            p_i=phi_p*psi.table.get(psi_assig)
+            table.set(a_i,p_i)
+    return Factor(variables=product_variables,
+                  table=table)
