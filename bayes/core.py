@@ -1,6 +1,21 @@
 import numpy as np
 import itertools
 
+class BayesNet(object):
+    def __init__(self,variables,factors,graph=None):
+        if(graph is None):
+            graph=SimpleDiGraph(len(variables))
+        self.variables=variables
+        self.factors=factors
+        self.graph=graph
+
+    def infer(self,query,evidence):
+        phi=self.factors[0]
+        for factor_i in self.factors[1:]:
+            phi=factor_product(phi,factor_i)
+        phi=phi.condition(evidence)
+        print(phi)
+
 class Assig(dict):
     def __init__(self, arg=[]):
         super(Assig, self).__init__(arg)
@@ -14,15 +29,7 @@ class SimpleDiGraph(object):
         self.near=[[] for i in range(n_nodes)]
 
     def add_edge(self,start,end):
-        self.near[start].append(end)
-   
-class BayesNet(object):
-    def __init__(self,variables,factors,graph=None):
-        if(graph is None):
-            graph=SimpleDiGraph(len(variables))
-        self.variables=variables
-        self.factors=factors
-        self.graph=graph
+        self.near[start].append(end)   
 
 class Variable(object):
     def __init__(self,name:str,domian:int):
@@ -47,7 +54,13 @@ class Factor(object):
         return any([ var_i.name==name 
                 for var_i in self.variables])      
 
-    def condition(self,name,value):
+    def condition(self,evidence):
+        phi=self
+        for name_i,value_i in evidence.items():
+            phi=phi.condition_single(name_i,value_i)
+        return phi
+
+    def condition_single(self,name,value):
         if(not self.in_scope(name)):
             return self
         pairs=[]

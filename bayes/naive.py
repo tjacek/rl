@@ -38,6 +38,8 @@ p_CV=get_factor(variables=[C,V],
 graph=SimpleDiGraph(3)
 graph.add_edge(0,1)
 graph.add_edge(0,2)
-BayesNet(variables=[C,S,V],
-	     factors=[p_C,p_CS,p_CV],
-	     graph=graph)
+bn=BayesNet(variables=[C,S,V],
+	        factors=[p_C,p_CS,p_CV],
+	        graph=graph)
+bn.infer(query=None,
+	     evidence=Assig({'S':1,'V':0}))
