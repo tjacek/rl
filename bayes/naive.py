@@ -8,9 +8,9 @@ V=Variable(name='V',
 	       domian=3)
 
 p_C=get_factor(variables=[C],
-	           pairs=[({'C':0},0.001),
-	                  ({'C':1},0.009),
-                      ({'C':1},0.009)])
+	           pairs=[({'C':0},0.8),
+	                  ({'C':1},0.19),
+                      ({'C':2},0.01)])
 
 p_CS=get_factor(variables=[C,S],
 	              pairs=[({'C':0,'S':0},0.001),

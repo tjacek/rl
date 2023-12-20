@@ -11,8 +11,13 @@ class BayesNet(object):
 
     def infer(self,query,evidence):
         phi=self.factors[0]
+#        print(phi)
         for factor_i in self.factors[1:]:
+#            print(factor_i)
             phi=factor_product(phi,factor_i)
+#            print("phi")
+#            print(phi)
+#        print(phi)
         phi=phi.condition(evidence)
         print(phi)
 
@@ -71,7 +76,8 @@ class Factor(object):
                 pairs.append((new_assig_i,p_i))
         variables=[var_i for var_i in self.variables
                         if(var_i.name!=name)]
-        return get_factor(variables,pairs)
+        return get_factor(variables=variables,
+                          pairs=pairs)
     
     def __str__(self):
         names=self.variable_names()
@@ -80,7 +86,7 @@ class Factor(object):
             desc=[ f'{name_i}={assig_i[name_i]}' 
                      for name_i in names]
             desc=','.join(desc)
-            s+=f'{desc},{p_i:.4f}\n' 
+            s+=f'{desc},{p_i:.6f}\n' 
         return s
 
     def marginalize(self,name:str):
