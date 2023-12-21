@@ -11,15 +11,13 @@ class BayesNet(object):
 
     def infer(self,query,evidence):
         phi=self.factors[0]
-#        print(phi)
         for factor_i in self.factors[1:]:
-#            print(factor_i)
             phi=factor_product(phi,factor_i)
-#            print("phi")
-#            print(phi)
-#        print(phi)
         phi=phi.condition(evidence)
-        print(phi)
+        names= list(set(phi.variable_names())-set(query))
+        for name_i in names:
+            phi=phi.marginalize(name=name_i)
+        return phi.normalize()
 
 class Assig(dict):
     def __init__(self, arg=[]):
@@ -104,7 +102,7 @@ class Factor(object):
     def normalize(self):
         z=sum([p_i for assig_i,p_i in self.table.iter()])
         for assig_i,p_i in self.table.iter():
-            self.self(assig_i,p_i/z)
+            self.table.set(assig_i,p_i/z)
         return self
 
 class FactorTable(object):
