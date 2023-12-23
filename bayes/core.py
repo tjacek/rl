@@ -9,10 +9,11 @@ class BayesNet(object):
         self.factors=factors
         self.graph=graph
 
-    def infer(self,query,evidence):
-#        phi=self.factors[0]
-#        for factor_i in self.factors[1:]:
-#            phi=factor_product(phi,factor_i)
+    def __call__(self,query,evidence,infer=None):
+        if(infer):
+            return infer(bn=self,
+                         query=query,
+                         evidence=evidence)
         phi=product(self.factors)
         phi=phi.condition(evidence)
         names= list(set(phi.variable_names())-set(query))
