@@ -10,14 +10,21 @@ class BayesNet(object):
         self.graph=graph
 
     def infer(self,query,evidence):
-        phi=self.factors[0]
-        for factor_i in self.factors[1:]:
-            phi=factor_product(phi,factor_i)
+#        phi=self.factors[0]
+#        for factor_i in self.factors[1:]:
+#            phi=factor_product(phi,factor_i)
+        phi=product(self.factors)
         phi=phi.condition(evidence)
         names= list(set(phi.variable_names())-set(query))
         for name_i in names:
             phi=phi.marginalize(name=name_i)
         return phi.normalize()
+
+def product(factors):
+    phi=factors[0]
+    for factor_i in factors[1:]:
+        phi=factor_product(phi,factor_i)
+    return phi 
 
 class Assig(dict):
     def __init__(self, arg=[]):

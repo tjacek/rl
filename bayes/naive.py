@@ -41,5 +41,11 @@ graph.add_edge(0,2)
 bn=BayesNet(variables=[C,S,V],
 	        factors=[p_C,p_CS,p_CV],
 	        graph=graph)
-bn.infer(query=None,
-	     evidence=Assig({'S':1,'V':0}))
+print(bn.infer(query=['C'],
+	      evidence=Assig({'S':1,'V':0})))
+
+#import infer
+#elm=infer.VariableElimination([0,1,2])
+#elm.infer(bn=bn,
+#	      query=['C'],
+#	      evidence=Assig({'S':1,'V':0}))
