@@ -45,3 +45,12 @@ graph.add_edge(2,4)
 bn=BayesNet(variables=variables,
 	        factors=factors,
 	        graph=graph)
+
+import infer
+elmi=infer.VariableElimination([0,1,2])
+phi=bn(infer=elmi,
+	   query=['B'],
+	   evidence=Assig({'D':1,'C':1}))
+print(phi)
+
+graph.topological_sort()
