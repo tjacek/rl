@@ -55,7 +55,7 @@ class SimpleDiGraph(object):
         return in_nodes
 
     def topological_sort(self):
-        S=list(self.input_nodes())
+        S=self.input_nodes()
         print(S)
         while S:
             node_i=S.pop()
@@ -103,16 +103,6 @@ class Factor(object):
                         if(var_i.name!=name)]
         return get_factor(variables=variables,
                           pairs=pairs)
-    
-    def __str__(self):
-        names=self.variable_names()
-        s=''
-        for assig_i,p_i in self.table.iter():
-            desc=[ f'{name_i}={assig_i[name_i]}' 
-                     for name_i in names]
-            desc=','.join(desc)
-            s+=f'{desc},{p_i:.6f}\n' 
-        return s
 
     def marginalize(self,name:str):
         variables=[var_i for var_i in self.variables
@@ -132,11 +122,32 @@ class Factor(object):
             self.table.set(assig_i,p_i/z)
         return self
 
+    def rand(self):
+        tot,p,w=0.0,np.random.random(),self.table.sum()
+        for assig_i,p_i in self.table.iter():
+            tot+=(p_i/w)
+            if(tot>p):
+                return assig_i
+        return Assig()
+
+    def __str__(self):
+        names=self.variable_names()
+        s=''
+        for assig_i,p_i in self.table.iter():
+            desc=[ f'{name_i}={assig_i[name_i]}' 
+                     for name_i in names]
+            desc=','.join(desc)
+            s+=f'{desc},{p_i:.6f}\n' 
+        return s
+
 class FactorTable(object):
     def __init__(self,names,array):
         self.names=names
         self.array=array
-    
+   
+    def sum(self):
+        return np.sum(self.array)
+   
     def get(self,assig_i):
         index=self.to_index(assig_i)
         return self.array[index]
