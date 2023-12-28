@@ -1,3 +1,4 @@
+import graph
 from core import *
 
 B=Variable(name='B',
@@ -37,14 +38,15 @@ factors=[get_factor(variables=[B],
 	                       ({'C':0,'E':1},0.01),
 	                       ({'C':1,'E':1},0.99)])
         ]
-graph=SimpleDiGraph(5)
-graph.add_edge(0,2)
-graph.add_edge(1,2)
-graph.add_edge(2,3)
-graph.add_edge(2,4)
+
+g=graph.SimpleDiGraph(5)
+g.add_edge(0,2)
+g.add_edge(1,2)
+g.add_edge(2,3)
+g.add_edge(2,4)
 bn=BayesNet(variables=variables,
 	        factors=factors,
-	        graph=graph)
+	        graph=g)
 
 import infer
 elmi=infer.VariableElimination([0,1,2])
@@ -53,4 +55,4 @@ phi=bn(infer=elmi,
 	   evidence=Assig({'D':1,'C':1}))
 print(phi)
 
-graph.topological_sort()
+g.topological_sort()

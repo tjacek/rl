@@ -3,8 +3,6 @@ import itertools
 
 class BayesNet(object):
     def __init__(self,variables,factors,graph=None):
-        if(graph is None):
-            graph=SimpleDiGraph(len(variables))
         self.variables=variables
         self.factors=factors
         self.graph=graph
@@ -35,31 +33,7 @@ class Assig(dict):
     	return Assig({var_i.name:self[var_i.name]
     		        for var_i in variables})
 
-class SimpleDiGraph(object):
-    def __init__(self,n_nodes:int):
-        self.in_edges=[[] for i in range(n_nodes)]
-        self.out_edges=[[] for i in range(n_nodes)]
-    
-    def nodes(self):
-        return range(len(self.in_edges))
 
-    def add_edge(self,start,end):
-        self.in_edges[start].append(end)
-        self.out_edges[end].append(start)
-
-    def input_nodes(self):
-        in_nodes=[]
-        for i,edge_i in enumerate(self.out_edges):
-            if(len(edge_i)==0):
-                in_nodes.append(i)
-        return in_nodes
-
-    def topological_sort(self):
-        S=self.input_nodes()
-        print(S)
-        while S:
-            node_i=S.pop()
-            print(node_i)
 
 class Variable(object):
     def __init__(self,name:str,domian:int):
