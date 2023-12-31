@@ -19,6 +19,16 @@ class BayesNet(object):
             phi=phi.marginalize(name=name_i)
         return phi.normalize()
 
+    def rand(self):
+        assig=Assig()
+        for i in self.graph.topological_sort():
+            name_i=self.variables[i].name
+            print(name_i)
+            phi_i=self.factors[i]
+            phi_i=phi_i.condition(evidence=assig)
+            assig[name_i]=phi_i.rand()[name_i]
+        return assig
+
 def product(factors):
     phi=factors[0]
     for factor_i in factors[1:]:
@@ -32,8 +42,6 @@ class Assig(dict):
     def select(self,variables):
     	return Assig({var_i.name:self[var_i.name]
     		        for var_i in variables})
-
-
 
 class Variable(object):
     def __init__(self,name:str,domian:int):

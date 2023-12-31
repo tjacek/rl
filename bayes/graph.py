@@ -41,12 +41,10 @@ class SimpleDiGraph(object):
         L=[]
         graph=self.copy()
         while S:
-            graph.print()
             n=S.pop()
             L.append(n)
             for m in self.start_edges[n]:
                 graph.remove_edge(n,m)
                 if(len(graph.end_edges[m])==0):
                     S.append(m)
-            print("***********")
         return L 
