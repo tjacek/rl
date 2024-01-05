@@ -43,8 +43,8 @@ class LikelihoodWeightedSampling(object):
                 phi_j=bn.factors[j]
                 if(name_j in evidence):
                     a_i[name_j]=evidence[name_j]
-                    b_j=a_i.select(phi_j.variable_names())
-                    w_i*= phi_j.get(a_i.select(b_j))
+                    b_j=a_i.select(phi_j.variables) #_names())
+                    w_i*= phi_j.table.get(a_i.select(b_j))
                 else:
                     phi_j.condition(a_i)
                     a_i[name_j]=phi_j.rand()[name_j]
