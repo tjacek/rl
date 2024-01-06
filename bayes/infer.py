@@ -50,7 +50,7 @@ class LikelihoodWeightedSampling(object):
                     a_i[name_j]=phi_j.rand()[name_j]
             b_i=a_i.select(variables=query)
             hist_i=table.get(b_i)
-            table.set(b_i,hist_i+w)
+            table.set(b_i,hist_i+w_i)
         factor=core.Factor(variables=s_vars,
                            table=table)
         return factor.normalize()

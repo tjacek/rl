@@ -23,7 +23,6 @@ class BayesNet(object):
         assig=Assig()
         for i in self.graph.topological_sort():
             name_i=self.variables[i].name
-            print(name_i)
             phi_i=self.factors[i]
             phi_i=phi_i.condition(evidence=assig)
             assig[name_i]=phi_i.rand()[name_i]
@@ -40,8 +39,13 @@ class Assig(dict):
         super(Assig, self).__init__(arg)
 
     def select(self,variables):
-    	return Assig({var_i.name:self[var_i.name]
-    		        for var_i in variables})
+        names= [get_name(var_i) for var_i in variables]
+        return Assig({name_i:self[name_i] for name_i in names})
+
+def get_name(var_i):
+    if(type(var_i)==Variable):
+        return var_i.name
+    return var_i
 
 class Variable(object):
     def __init__(self,name:str,domian:int):
@@ -60,7 +64,7 @@ class Factor(object):
         self.table=table
 
     def variable_names(self):
-        return [var_i.name for var_i in self.variables]
+        return [ var_i.name for var_i in self.variables]
 
     def in_scope(self,name):
         return any([ var_i.name==name 
