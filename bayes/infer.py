@@ -54,7 +54,21 @@ class LikelihoodWeightedSampling(object):
         factor=core.Factor(variables=s_vars,
                            table=table)
         return factor.normalize()
-        
+
+    def get_weight(self,bn,a_i,evidence):
+        w_i=1.0
+        ordering = bn.graph.topological_sort()
+        for j in ordering:
+            name_j=bn.variables[j].name
+            phi_j=bn.factors[j]
+            if(name_j in evidence):
+                b_j=a_i.select(phi_j.variables) #_names())
+                w_i*= phi_j.table.get(a_i.select(b_j))
+            else:
+                phi_j.condition(a_i)
+                a_i[name_j]=phi_j.rand()[name_j]
+        return w_i
+
 class VariableElimination(object):
     def __init__(self,ordering):
         self.ordering=ordering
