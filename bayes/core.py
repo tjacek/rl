@@ -1,5 +1,6 @@
 import numpy as np
-import itertools
+import itertools,copy
+
 
 class BayesNet(object):
     def __init__(self,variables,factors,graph=None):
@@ -18,6 +19,11 @@ class BayesNet(object):
         for name_i in names:
             phi=phi.marginalize(name=name_i)
         return phi.normalize()
+
+    def blanket(self,a,i):
+        name_i=self.variables[i].name
+        val_i=a[name_i]
+        a=a.delete(a,name_i)
 
     def rand(self):
         assig=Assig()
@@ -41,6 +47,11 @@ class Assig(dict):
     def select(self,variables):
         names= [get_name(var_i) for var_i in variables]
         return Assig({name_i:self[name_i] for name_i in names})
+    
+    def delete(self,name_i):
+        new_assig=copy.deepcopy(self)
+        del new_assig_i[name_i]
+        return new_assig
 
 def get_name(var_i):
     if(type(var_i)==Variable):
