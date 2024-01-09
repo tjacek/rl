@@ -24,6 +24,11 @@ class BayesNet(object):
         name_i=self.variables[i].name
         val_i=a[name_i]
         a=a.delete(a,name_i)
+        s_factors=[ phi_j.in_scope(name_i)
+                    for phi_j in self.factors]
+        theta=product([ phi_j.condition(a)
+                         for phi_j in s_factors])
+        return theta
 
     def rand(self):
         assig=Assig()
