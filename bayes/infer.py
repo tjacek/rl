@@ -37,36 +37,47 @@ class LikelihoodWeightedSampling(object):
         table=core.get_factor(variables=s_vars,
                               pairs=None)
         for i in range(self.m):
-            a_i,w_i=bn.rand(),1.0
+            a_i,w_i=core.Assig(),1.0
             for j in ordering:
                 name_j=bn.variables[j].name
                 phi_j=bn.factors[j]
                 if(name_j in evidence):
                     a_i[name_j]=evidence[name_j]
-                    b_j=a_i.select(phi_j.variables) #_names())
-                    w_i*= phi_j.table.get(a_i.select(b_j))
+                    t_j=a_i.select(phi_j.variables) #_names())
+                    w_i*= phi_j.table.get(t_j) #a_i.select(b_j))
                 else:
                     phi_j.condition(a_i)
                     a_i[name_j]=phi_j.rand()[name_j]
+            print(a_i)
             b_i=a_i.select(variables=query)
             hist_i=table.get(b_i)
             table.set(b_i,hist_i+w_i)
+#            print(w_i)
         factor=core.Factor(variables=s_vars,
                            table=table)
         return factor.normalize()
 
-    def get_weight(self,bn,a_i,evidence):
-        w_i=1.0
+    def get_weight(self,bn,query,evidence):
+        a_i,w_i=core.Assig(),1.0
         ordering = bn.graph.topological_sort()
+        history=[]
         for j in ordering:
             name_j=bn.variables[j].name
             phi_j=bn.factors[j]
             if(name_j in evidence):
-                b_j=a_i.select(phi_j.variables) #_names())
-                w_i*= phi_j.table.get(a_i.select(b_j))
+                parents_j=[name_k for name_k in phi_j.variable_names()
+                            if(name_k!=name_j)]
+                phi_j=phi_j.condition(a_i.select(parents_j))
+                print(phi_j)
+                a_i[name_j]=evidence[name_j]
+#                b_j=a_i.select(phi_j.variables)
+#                history.append((phi_j.variable_names(),b_j,phi_j.table.get(b_j)))
+                w_i*=phi_j.table.get(core.Assig({name_j:evidence[name_j]}))
+                history.append((parents_j,a_i,w_i))  
             else:
-                phi_j.condition(a_i)
-                a_i[name_j]=phi_j.rand()[name_j]
+#                phi_j=phi_j.condition(a_i)
+                a_i[name_j]=query[name_j]
+        print(history)
         return w_i
 
 class VariableElimination(object):
