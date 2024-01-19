@@ -43,8 +43,8 @@ class LikelihoodWeightedSampling(object):
                 phi_j=bn.factors[j]
                 if(name_j in evidence):
                     a_i[name_j]=evidence[name_j]
-                    t_j=a_i.select(phi_j.variables) #_names())
-                    w_i*= phi_j.table.get(t_j) #a_i.select(b_j))
+                    t_j=a_i.select(phi_j.variables) 
+                    w_i*= phi_j.table.get(t_j)
                 else:
                     phi_j.condition(a_i)
                     a_i[name_j]=phi_j.rand()[name_j]
@@ -52,33 +52,24 @@ class LikelihoodWeightedSampling(object):
             b_i=a_i.select(variables=query)
             hist_i=table.get(b_i)
             table.set(b_i,hist_i+w_i)
-#            print(w_i)
         factor=core.Factor(variables=s_vars,
                            table=table)
         return factor.normalize()
 
-    def get_weight(self,bn,query,evidence):
-        a_i,w_i=core.Assig(),1.0
-        ordering = bn.graph.topological_sort()
-        history=[]
-        for j in ordering:
-            name_j=bn.variables[j].name
-            phi_j=bn.factors[j]
-            if(name_j in evidence):
-                parents_j=[name_k for name_k in phi_j.variable_names()
-                            if(name_k!=name_j)]
-                phi_j=phi_j.condition(a_i.select(parents_j))
-                print(phi_j)
-                a_i[name_j]=evidence[name_j]
-#                b_j=a_i.select(phi_j.variables)
-#                history.append((phi_j.variable_names(),b_j,phi_j.table.get(b_j)))
-                w_i*=phi_j.table.get(core.Assig({name_j:evidence[name_j]}))
-                history.append((parents_j,a_i,w_i))  
-            else:
-#                phi_j=phi_j.condition(a_i)
-                a_i[name_j]=query[name_j]
-        print(history)
-        return w_i
+class GibbsSampling(object):
+    def __init__(self,m_samples,m_burnin,m_skip,ordering):
+        self.m_samples=m_samples
+        self.m_burnin=m_burnin
+        self.m_skip=m_skip
+        self.ordering=ordering
+
+    def __call__(self,bn:core.BayesNet,query:list,evidence:core.Assig):
+        table=core.get_factor(variables=bn.variables,
+                              pairs=None)
+        a=bn.rand()
+        a=Assig({name_i:value_j 
+                    for name_i,value_i in a.items()
+                        if(not name_i in evidence)})
 
 class VariableElimination(object):
     def __init__(self,ordering):

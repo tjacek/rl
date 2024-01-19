@@ -25,3 +25,12 @@ bn=BayesNet(variables=variables,
 
 phi=factors[1].condition(Assig({'C':1}))
 print(phi)
+
+import infer
+elmi=infer.LikelihoodWeightedSampling(m=10000)
+
+phi=bn(infer=elmi,
+	   query=[C],
+	   evidence=Assig({'D':1}))
+print("****************")
+print(phi)

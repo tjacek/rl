@@ -90,7 +90,7 @@ class Factor(object):
         phi=self
         for name_i,value_i in evidence.items():
             phi=phi.condition_single(name_i,value_i)
-        return phi
+        return phi#.normalize()
 
     def condition_single(self,name,value):
         if(not self.in_scope(name)):
@@ -126,8 +126,10 @@ class Factor(object):
 
     def rand(self):
         tot,p,w=0.0,np.random.random(),self.table.sum()
+#        print(f"rand:{w}")
         for assig_i,p_i in self.table.iter():
             tot+=(p_i/w)
+#            print(tot)
             if(tot>p):
                 return assig_i
         return Assig()
