@@ -57,7 +57,7 @@ class LikelihoodWeightedSampling(object):
         return factor.normalize()
 
 class GibbsSampling(object):
-    def __init__(self,m_samples,m_burnin,m_skip,ordering):
+    def __init__(self,m_samples:int,m_burnin:int,m_skip:int,ordering:list):
         self.m_samples=m_samples
         self.m_burnin=m_burnin
         self.m_skip=m_skip
@@ -67,9 +67,26 @@ class GibbsSampling(object):
         table=core.get_factor(variables=bn.variables,
                               pairs=None)
         a=bn.rand()
-        a=Assig({name_i:value_j 
-                    for name_i,value_i in a.items()
-                        if(not name_i in evidence)})
+        a=core.Assig({name_i:value_i 
+                        for name_i,value_i in a.items()
+                            if(not name_i in evidence)})
+        a=self.gibbs_sample(a,bn, evidence)
+        for i in range(self.m_samples):
+            a=self.gibbs_sample(a,bn, evidence)
+
+
+    def gibbs_sample(self,a:core.Assig,bn:core.BayesNet, evidence:core.Assig):
+        for j in range(self.m_skip):
+            a=self.update_gibbs_sample(a, bn,evidence)
+        return a
+
+    def update_gibbs_sample(self,a:core.Assig,bn:core.BayesNet, evidence:core.Assig):
+        for i in self.ordering:
+            name_i=bn.variables[i].name
+            if(not name_i in evidence):
+                b=bn.blanket(a,i)
+                a[name_i]=b.rand()[name_i]
+        return a
 
 class VariableElimination(object):
     def __init__(self,ordering):

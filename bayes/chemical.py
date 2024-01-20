@@ -27,9 +27,13 @@ phi=factors[1].condition(Assig({'C':1}))
 print(phi)
 
 import infer
-elmi=infer.LikelihoodWeightedSampling(m=10000)
+#alg=infer.LikelihoodWeightedSampling(m=10000)
+alg=infer.GibbsSampling(m_samples=100,
+	                    m_burnin=10,
+	                    m_skip=10,
+	                    ordering=[0,1])
 
-phi=bn(infer=elmi,
+phi=bn(infer=alg,
 	   query=[C],
 	   evidence=Assig({'D':1}))
 print("****************")

@@ -23,9 +23,10 @@ class BayesNet(object):
     def blanket(self,a,i):
         name_i=self.variables[i].name
         val_i=a[name_i]
-        a=a.delete(a,name_i)
-        s_factors=[ phi_j.in_scope(name_i)
-                    for phi_j in self.factors]
+        a=a.delete(name_i)
+        s_factors=[ phi_j
+                    for phi_j in self.factors
+                        if(phi_j.in_scope(name_i))]
         theta=product([ phi_j.condition(a)
                          for phi_j in s_factors])
         return theta
@@ -55,7 +56,7 @@ class Assig(dict):
     
     def delete(self,name_i):
         new_assig=copy.deepcopy(self)
-        del new_assig_i[name_i]
+        del new_assig[name_i]
         return new_assig
 
 def get_name(var_i):
