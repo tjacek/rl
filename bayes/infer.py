@@ -73,7 +73,15 @@ class GibbsSampling(object):
         a=self.gibbs_sample(a,bn, evidence)
         for i in range(self.m_samples):
             a=self.gibbs_sample(a,bn, evidence)
-
+            b=a.select(query)
+            value= table.get(b)
+            table.set(b,value+1)
+        query_set=set([var_i.name for var_i in query])
+        s_vars=[var_i for var_i in bn.variables
+                  if(var_i.name in query_set)]
+        factor=core.Factor(variables=s_vars,
+                           table=table)
+        return factor.normalize()         
 
     def gibbs_sample(self,a:core.Assig,bn:core.BayesNet, evidence:core.Assig):
         for j in range(self.m_skip):
