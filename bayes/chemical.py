@@ -29,8 +29,8 @@ print(phi)
 import infer
 #alg=infer.LikelihoodWeightedSampling(m=10000)
 alg=infer.GibbsSampling(m_samples=100,
-	                    m_burnin=10,
-	                    m_skip=10,
+	                    m_burnin=100,
+	                    m_skip=100,
 	                    ordering=[0,1])
 
 phi=bn(infer=alg,

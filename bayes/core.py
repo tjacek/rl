@@ -127,10 +127,8 @@ class Factor(object):
 
     def rand(self):
         tot,p,w=0.0,np.random.random(),self.table.sum()
-#        print(f"rand:{w}")
         for assig_i,p_i in self.table.iter():
             tot+=(p_i/w)
-#            print(tot)
             if(tot>p):
                 return assig_i
         return Assig()

@@ -56,6 +56,14 @@ class LikelihoodWeightedSampling(object):
                            table=table)
         return factor.normalize()
 
+def empty_table(bn,query):
+    query_set=set([var_i.name for var_i in query])
+    s_vars=[var_i for var_i in bn.variables
+                  if(var_i.name in query_set)]
+    table= core.get_factor(variables=s_vars,
+                          pairs=None)    
+    return table,s_vars
+
 class GibbsSampling(object):
     def __init__(self,m_samples:int,m_burnin:int,m_skip:int,ordering:list):
         self.m_samples=m_samples
@@ -64,27 +72,26 @@ class GibbsSampling(object):
         self.ordering=ordering
 
     def __call__(self,bn:core.BayesNet,query:list,evidence:core.Assig):
-        table=core.get_factor(variables=bn.variables,
-                              pairs=None)
-        a=bn.rand()
-        a=core.Assig({name_i:value_i 
-                        for name_i,value_i in a.items()
-                            if(not name_i in evidence)})
-        a=self.gibbs_sample(a,bn, evidence)
+        table,s_vars= empty_table(bn,query)
+        a=core.Assig({**bn.rand(),**evidence})
+#        a=core.Assig({name_i:value_i 
+#                        for name_i,value_i in a.items()
+#                            if(not name_i in evidence)})
+        a=self.gibbs_sample(a,bn, evidence,self.m_burnin)
         for i in range(self.m_samples):
-            a=self.gibbs_sample(a,bn, evidence)
+            a=self.gibbs_sample(a,bn, evidence,self.m_skip)
             b=a.select(query)
             value= table.get(b)
             table.set(b,value+1)
-        query_set=set([var_i.name for var_i in query])
-        s_vars=[var_i for var_i in bn.variables
-                  if(var_i.name in query_set)]
         factor=core.Factor(variables=s_vars,
                            table=table)
         return factor.normalize()         
 
-    def gibbs_sample(self,a:core.Assig,bn:core.BayesNet, evidence:core.Assig):
-        for j in range(self.m_skip):
+    def gibbs_sample(self,a:core.Assig,
+                          bn:core.BayesNet, 
+                          evidence:core.Assig,
+                          n_samples:int):
+        for j in range(n_samples):
             a=self.update_gibbs_sample(a, bn,evidence)
         return a
 
