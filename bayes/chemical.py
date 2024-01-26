@@ -1,6 +1,27 @@
-import graph
+import graph,infer
 from core import *
 
+def get_algs(m_samples:int):
+    algs={'like' :infer.LikelihoodWeightedSampling(m=m_samples),
+          'gibbs':infer.GibbsSampling(m_samples=m_samples,
+	                          m_burnin=100,
+	                          m_skip=100,
+	                          ordering=[0,1])}
+    return algs
+
+def plot(bn,query,evidence,step=250,n_steps=10):
+    samples=np.arange(n_steps)*step
+    var_name=query[0].name
+    ts_series={'like':[],'gibbs':[]}
+    for sample_i in samples:
+    	print(f'n_samples:{sample_i}')
+    	for name_j,alg_j in get_algs(sample_i).items():
+            dist_j=bn(infer=alg_j,
+                      query=query,
+    	              evidence=evidence)
+            value_i= dist_j.table.get({var_name:1})
+            ts_series[name_j].append(value_i)
+    print(ts_series)
 
 C=Variable(name='C',
 	       domian=2)
@@ -23,18 +44,16 @@ bn=BayesNet(variables=variables,
 	        factors=factors,
 	        graph=g)
 
-phi=factors[1].condition(Assig({'C':1}))
-print(phi)
+#phi=factors[1].condition(Assig({'C':1}))
+#print(phi)
 
-import infer
-#alg=infer.LikelihoodWeightedSampling(m=10000)
-alg=infer.GibbsSampling(m_samples=100,
-	                    m_burnin=100,
-	                    m_skip=100,
-	                    ordering=[0,1])
 
-phi=bn(infer=alg,
-	   query=[C],
-	   evidence=Assig({'D':1}))
-print("****************")
-print(phi)
+#phi=bn(infer=alg,
+#	   query=[C],
+#	   evidence=Assig({'D':1}))
+
+plot(bn=bn,
+	 query=[C],
+     evidence=Assig({'D':1}))
+#print("****************")
+#print(phi)
