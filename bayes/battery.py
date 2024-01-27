@@ -48,11 +48,20 @@ bn=BayesNet(variables=variables,
 	        factors=factors,
 	        graph=g)
 
-import infer
-elmi=infer.VariableElimination([0,1,2])
-phi=bn(infer=elmi,
-	   query=['B'],
-	   evidence=Assig({'D':1,'C':1}))
-print(phi)
+#phi_i=bn.factors[3]
+#print(phi_i.condition({'E':1}))
+#phi_i=bn.factors[4]
+#print(phi_i.condition({'E':1}))
 
-g.topological_sort()
+#import infer
+#elmi=infer.LikelihoodWeightedSampling(m=100)
+#w=elmi.get_weight(bn=bn,
+#	              query=Assig({'B':0,'S':0,'E':0}), #,'D':1,'C':1}),
+#	              evidence=Assig({'D':1,'C':1}))
+#print(f'{w:4f}')
+
+#phi=bn(infer=elmi,
+#	   query=[B],
+#	   evidence=Assig({'D':0,'C':0}))
+#print("****************")
+#print(phi)

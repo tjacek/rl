@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import graph,infer
 from core import *
 
@@ -9,7 +10,7 @@ def get_algs(m_samples:int):
 	                          ordering=[0,1])}
     return algs
 
-def plot(bn,query,evidence,step=250,n_steps=10):
+def plot(bn,query,evidence,step=125,n_steps=10):
     samples=np.arange(n_steps)*step
     var_name=query[0].name
     ts_series={'like':[],'gibbs':[]}
@@ -20,8 +21,18 @@ def plot(bn,query,evidence,step=250,n_steps=10):
                       query=query,
     	              evidence=evidence)
             value_i= dist_j.table.get({var_name:1})
+            if(np.isnan(value_i)):
+            	print(value_i)
+            	value_i=0.0
             ts_series[name_j].append(value_i)
     print(ts_series)
+    for name_i,y_i in ts_series.items():
+        plt.plot(samples,y_i , 
+        	     label=name_i, 
+                 linewidth=3)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 C=Variable(name='C',
 	       domian=2)

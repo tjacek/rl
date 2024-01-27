@@ -48,7 +48,6 @@ class LikelihoodWeightedSampling(object):
                 else:
                     phi_j.condition(a_i)
                     a_i[name_j]=phi_j.rand()[name_j]
-            print(a_i)
             b_i=a_i.select(variables=query)
             hist_i=table.get(b_i)
             table.set(b_i,hist_i+w_i)
@@ -74,9 +73,6 @@ class GibbsSampling(object):
     def __call__(self,bn:core.BayesNet,query:list,evidence:core.Assig):
         table,s_vars= empty_table(bn,query)
         a=core.Assig({**bn.rand(),**evidence})
-#        a=core.Assig({name_i:value_i 
-#                        for name_i,value_i in a.items()
-#                            if(not name_i in evidence)})
         a=self.gibbs_sample(a,bn, evidence,self.m_burnin)
         for i in range(self.m_samples):
             a=self.gibbs_sample(a,bn, evidence,self.m_skip)
