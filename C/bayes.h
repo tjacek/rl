@@ -17,19 +17,19 @@ class Assig{
 
 };
 
-//class FactorTable{
-//  std::map<std::string,Assig>;
-//  public:
-//  	 double get(Assig assig);
-//  	 void set(Assig assig,double p);
-//  	 double sum();
-//};
+class Table{
+  std::map<std::string,double> dict;
+  public:
+  	 double get(Assig & assig);
+  	 void set(Assig & assig,double p);
+  	 double sum();
+};
 
-//class Factor{
-//  std::list<Variable> variables;
-//  FactorTable table;
-//  std::list<std::string> variable_names();
+class Factor{
+  std::list<Variable> variables;
+  Table table;
+  std::list<std::string> variable_names();
 //  bool in_scope(std::string name);
 //  Factor condition(Assig evidence);
 //  Factor marginalize(std::string name);
-//};
+};
