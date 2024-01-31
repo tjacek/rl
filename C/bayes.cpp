@@ -48,6 +48,39 @@ std::list<std::string> Factor::variable_names(){
   return names;
 }
 
+bool Factor::in_scope(std::string name){
+  for(const auto& variable_i : this->variables){
+    if(variable_i.name==name){
+      return true;
+    }
+  }
+  return false;
+}
+
+FactorPtr Factor::condition(Assig & evidence){
+  FactorPtr theta(this);
+  for (auto pair_i : evidence.dict){
+    theta=this->condition(theta,pair_i.first,pair_i.second);
+  }
+  return theta;
+}
+
+
+FactorPtr Factor::condition(FactorPtr factor,std::string name,double value){
+  if( factor->in_scope(name)){
+    return factor;
+  }
+//  std::list<Variable> vars;
+  auto theta = std::make_shared<Factor>();
+  
+  for(const auto& variable_i : this->variables){
+    if(variable_i.name==name){
+      theta->variables.push_back(variable_i);
+    }
+  }
+  return theta;
+}
+
 
 int main(){
  Assig assig;
