@@ -23,11 +23,15 @@ class Assig{
 
 };
 
+//typedef std::shared_ptr<Assig> AssigPtr;
+
 class Table{
-  std::map<std::string,double> dict;
-  double get(Assig & assig);
-  void set(Assig & assig,double p);
-  double sum();
+  public:
+    std::map<std::string,double> dict;
+    double get(Assig & assig);
+    void set(Assig & assig,double p);
+    void set(std::vector<int> assig,double p);
+    double sum();
 };
 
 class Factor;

@@ -32,6 +32,14 @@ void Table::set(Assig & assig,double p){
   this->dict[id]=p;
 }
 
+void Table::set(std::vector<int> assig,double p){
+  std::string id="";
+  for (auto value_i : assig){
+    id+= std::to_string(value_i);
+  }
+  this->dict[id]=p;
+}
+
 double Table::sum(){
   double total=0.0;
   for (auto pair_i : this->dict){
@@ -92,8 +100,16 @@ FactorPtr read_factor(std::string name){
         VariablePtr var_j(new Variable(name_j));
         theta->variables.push_back(var_j);
       }
-      std::cout  << line << "\n";
-    } 
+     
+    }else{
+       std::vector<std::string> raw=split(line);   
+       std::vector<int> assig;
+       for(int i=0; i<raw.size()-1; i++){
+         assig.push_back(stoi(raw[i]));
+       }
+       double p= std::stod(raw[raw.size()-1]);
+       theta->table.set(assig,p);
+    }
   }
   return theta;
 }
@@ -110,10 +126,5 @@ std::vector<std::string> split(std::string str){
 }
 
 int main(){
-// Assig assig;
-// assig.dict={{"B", 1}, 
-//             {"A", 0}, 
-//             {"C", 1}};
-// std::cout << assig.to_str() << "\n";
   read_factor("fac.txt");
 }
