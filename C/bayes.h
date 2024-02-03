@@ -46,6 +46,7 @@ class Factor{
     FactorPtr condition(Assig & evidence);
     FactorPtr condition(FactorPtr factor,std::string name,double value);
     FactorPtr marginalize(std::string & name);
+    std::string to_str();
 };
 
 FactorPtr read_factor(std::string name);

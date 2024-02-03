@@ -78,7 +78,6 @@ FactorPtr Factor::condition(FactorPtr factor,std::string name,double value){
   if( factor->in_scope(name)){
     return factor;
   }
-//  std::list<Variable> vars;
   auto theta = std::make_shared<Factor>();
   
   for(const auto& variable_i : this->variables){
@@ -89,8 +88,22 @@ FactorPtr Factor::condition(FactorPtr factor,std::string name,double value){
   return theta;
 }
 
+std::string Factor::to_str(){
+  std::string id="";
+  for (auto pair_i : this->table.dict){
+    int j=0;
+    std::string line_j="";
+    for(auto v_j: this->variables){
+      line_j+= v_j->name + "=" + pair_i.first[j]+",";
+      j++; 
+    }
+    id+=line_j+":"+std::to_string(pair_i.second)+"\n";
+  }
+  return id;
+}
+
 FactorPtr read_factor(std::string name){
-  FactorPtr theta = std::make_shared<Factor>();
+  FactorPtr theta = std::make_unique<Factor>();
   std::ifstream infile(name);
   std::string line;
   while (std::getline(infile, line)){
@@ -126,5 +139,6 @@ std::vector<std::string> split(std::string str){
 }
 
 int main(){
-  read_factor("fac.txt");
+  FactorPtr factor= read_factor("fac.txt");
+  std::cout << factor->to_str();
 }
