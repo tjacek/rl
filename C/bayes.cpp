@@ -12,7 +12,7 @@ AssigPtr Assig::del(std::string name){
   AssigPtr new_assig=std::make_shared<Assig>();
   for (auto pair_i : this->dict){
     if(pair_i.first!=name){
-//      new_assig->dict[pair_i.first]=pair_i.second;
+      new_assig->dict[pair_i.first]=pair_i.second;
     }
   }
   return new_assig;
@@ -98,9 +98,8 @@ FactorPtr Factor::condition(std::string name,int value){
       AssigPtr assig=pair_i.second->del(name);
       std::string id=pair_i.second->to_id();    
 //      theta->table.assig_dict[id]=assig;
-      std::cout << id << " " << assig->to_id() <<"\n";
       double p_i=this->table.prob_dict[id];
-      theta->table.prob_dict[id]=p_i;
+      theta->table.prob_dict[assig->to_id()]=p_i;
     }
   }
   for(const auto& variable_i : this->variables){
