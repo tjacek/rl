@@ -8,6 +8,16 @@ std::string Assig::to_id(){
   return id;
 }
 
+AssigPtr Assig::del(std::string name){
+  AssigPtr new_assig=std::make_shared<Assig>();
+  for (auto pair_i : this->dict){
+    if(pair_i.first!=name){
+//      new_assig->dict[pair_i.first]=pair_i.second;
+    }
+  }
+  return new_assig;
+}
+
 std::string Assig::to_str(){
   std::string id="";
   for (auto pair_i : this->dict){
@@ -19,30 +29,35 @@ std::string Assig::to_str(){
   return id;
 }
 
-double Table::get(Assig & assig){
-  std::string id=assig.to_id();
-  if( this->dict.contains(id)){
-    return this->dict[id];
+double Table::get(AssigPtr assig){
+  std::string id=assig->to_id();
+  if( this->prob_dict.contains(id)){
+    return this->prob_dict[id];
   }
   return 0.0;
 }
 
-void Table::set(Assig & assig,double p){
-  std::string id=assig.to_id();
-  this->dict[id]=p;
+void Table::set(AssigPtr assig,double p){
+  std::string id=assig->to_id();
+  this->assig_dict[id]=assig;
+  this->prob_dict[id]=p;
 }
 
-void Table::set(std::vector<int> assig,double p){
-  std::string id="";
-  for (auto value_i : assig){
-    id+= std::to_string(value_i);
+void Table::set(std::list<VariablePtr> & variables,std::vector<int> values,double p){
+  AssigPtr assig(new Assig());
+  int i=0;
+  for(auto var_i:variables){
+    assig->dict[var_i->name]=values[i];
+    i++;
   }
-  this->dict[id]=p;
+  std::string id=assig->to_id();
+  this->assig_dict[id]=assig;
+  this->prob_dict[id]=p;
 }
 
 double Table::sum(){
   double total=0.0;
-  for (auto pair_i : this->dict){
+  for (auto pair_i : this->prob_dict){
   	total+= pair_i.second;
   }
   return total;
@@ -65,23 +80,31 @@ bool Factor::in_scope(std::string name){
   return false;
 }
 
-FactorPtr Factor::condition(Assig & evidence){
-  FactorPtr theta(this);
-  for (auto pair_i : evidence.dict){
-    theta=this->condition(theta,pair_i.first,pair_i.second);
+FactorPtr Factor::condition(AssigPtr evidence){
+  FactorPtr theta=std::make_shared<Factor>(*this);
+  for (auto pair_i : evidence->dict){
+    theta=theta->condition(pair_i.first,pair_i.second);
   }
   return theta;
 }
 
-
-FactorPtr Factor::condition(FactorPtr factor,std::string name,double value){
-  if( factor->in_scope(name)){
-    return factor;
+FactorPtr Factor::condition(std::string name,int value){
+  if( !this->in_scope(name)){
+    return std::make_shared<Factor>(*this);
   }
   auto theta = std::make_shared<Factor>();
-  
+  for(auto pair_i : this->table.assig_dict){
+    if(pair_i.second->dict[name]==value){
+      AssigPtr assig=pair_i.second->del(name);
+      std::string id=pair_i.second->to_id();    
+//      theta->table.assig_dict[id]=assig;
+      std::cout << id << " " << assig->to_id() <<"\n";
+      double p_i=this->table.prob_dict[id];
+      theta->table.prob_dict[id]=p_i;
+    }
+  }
   for(const auto& variable_i : this->variables){
-    if(variable_i->name==name){
+    if(variable_i->name!=name){
       theta->variables.push_back(variable_i);
     }
   }
@@ -90,7 +113,11 @@ FactorPtr Factor::condition(FactorPtr factor,std::string name,double value){
 
 std::string Factor::to_str(){
   std::string id="";
-  for (auto pair_i : this->table.dict){
+  for(auto var_i : this->variables){
+    id+=var_i->name +" ";
+  }
+  id+="\n";
+  for (auto pair_i : this->table.prob_dict){
     int j=0;
     std::string line_j="";
     for(auto v_j: this->variables){
@@ -121,7 +148,7 @@ FactorPtr read_factor(std::string name){
          assig.push_back(stoi(raw[i]));
        }
        double p= std::stod(raw[raw.size()-1]);
-       theta->table.set(assig,p);
+       theta->table.set(theta->variables,assig,p);
     }
   }
   return theta;
@@ -141,4 +168,8 @@ std::vector<std::string> split(std::string str){
 int main(){
   FactorPtr factor= read_factor("fac.txt");
   std::cout << factor->to_str();
+  AssigPtr evidence(new Assig({{"Y", 1}}));
+  FactorPtr f=factor->condition(evidence);
+  std::cout << "*************\n";
+  std::cout << f->to_str();
 }
