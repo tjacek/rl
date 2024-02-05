@@ -48,7 +48,7 @@ class Factor{
     bool in_scope(std::string name);
     FactorPtr condition(AssigPtr evidence);
     FactorPtr condition(std::string name,int value);
-    FactorPtr marginalize(std::string & name);
+    FactorPtr marginalize(std::string name);
     std::string to_str();
 };
 

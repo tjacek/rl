@@ -9,7 +9,7 @@ std::string Assig::to_id(){
 }
 
 AssigPtr Assig::del(std::string name){
-  AssigPtr new_assig=std::make_shared<Assig>();
+  AssigPtr new_assig=std::make_shared<Assig>();  
   for (auto pair_i : this->dict){
     if(pair_i.first!=name){
       new_assig->dict[pair_i.first]=pair_i.second;
@@ -97,7 +97,6 @@ FactorPtr Factor::condition(std::string name,int value){
     if(pair_i.second->dict[name]==value){
       AssigPtr assig=pair_i.second->del(name);
       std::string id=pair_i.second->to_id();    
-//      theta->table.assig_dict[id]=assig;
       double p_i=this->table.prob_dict[id];
       theta->table.prob_dict[assig->to_id()]=p_i;
     }
@@ -106,6 +105,23 @@ FactorPtr Factor::condition(std::string name,int value){
     if(variable_i->name!=name){
       theta->variables.push_back(variable_i);
     }
+  }
+  return theta;
+}
+
+FactorPtr Factor::marginalize(std::string name){
+  FactorPtr theta = std::make_shared<Factor>();
+  for(auto var_i : this->variables){
+    if(var_i->name != name){
+      theta->variables.push_back(var_i);
+    }
+  }
+  for(auto pair_i : this->table.assig_dict){
+    AssigPtr a_i= pair_i.second;
+    AssigPtr new_a_i= a_i->del(name);
+    double curent_i=theta->table.get(new_a_i);
+    double p_i=this->table.get(a_i);
+    theta->table.set(new_a_i,curent_i+p_i);
   }
   return theta;
 }
@@ -167,8 +183,8 @@ std::vector<std::string> split(std::string str){
 int main(){
   FactorPtr factor= read_factor("fac.txt");
   std::cout << factor->to_str();
-  AssigPtr evidence(new Assig({{"Y", 1}}));
-  FactorPtr f=factor->condition(evidence);
+//  AssigPtr evidence(new Assig({{"Y", 1}}));
+  FactorPtr f=factor->marginalize("Y");
   std::cout << "*************\n";
   std::cout << f->to_str();
 }
