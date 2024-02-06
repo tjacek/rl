@@ -29,6 +29,15 @@ std::string Assig::to_str(){
   return id;
 }
 
+std::vector<std::string> Table::keys(){
+  std::vector<std::string> keys;
+  keys.reserve(this->prob_dict.size());
+  for(const auto& [key, value] : this->prob_dict) {
+    keys.push_back(key);
+  }
+  return keys;
+}
+
 double Table::get(AssigPtr assig){
   std::string id=assig->to_id();
   if( this->prob_dict.contains(id)){
@@ -36,6 +45,11 @@ double Table::get(AssigPtr assig){
   }
   return 0.0;
 }
+
+std::pair<AssigPtr,double> Table::get(std::string name){
+  return std::make_pair(this->assig_dict[name],this->prob_dict[name]);
+}
+
 
 void Table::set(AssigPtr assig,double p){
   std::string id=assig->to_id();
@@ -63,13 +77,20 @@ double Table::sum(){
   return total;
 }
 
-std::list<std::string> Factor::variable_names(){
-  std::list<std::string> names;
+std::vector<std::string> Factor::variable_names(){
+  std::vector<std::string> names;
   for(const auto& variable_i : this->variables){
     names.push_back(variable_i->name);
   }
   return names;
 }
+
+std::unordered_set<std::string> Factor::variable_set(){
+  std::vector<std::string> names=this->variable_names();
+  std::unordered_set<std::string> name_set(std::begin(names), std::end(names));;
+  return name_set;
+}
+
 
 bool Factor::in_scope(std::string name){
   for(const auto& variable_i : this->variables){
@@ -126,6 +147,27 @@ FactorPtr Factor::marginalize(std::string name){
   return theta;
 }
 
+FactorPtr Factor::product(FactorPtr psi){
+//  std::unordered_set<std::string> theta_names=this->variable_set();
+//  std::unordered_set<std::string> psi_names=psi->variable_set();
+//  std::unordered_set<std::string> shared;
+//  std::set_intersection(theta_names.begin(), theta_names.end(), 
+//                        psi_names.begin(), psi_names.end(),
+//                        std::inserter(shared, shared.begin()));
+//  std::vector<std::string> psi_only;  
+
+//  std::set_difference(theta_names.begin(), theta_names.end(), 
+//                      psi_names.begin(), psi_names.end(), 
+//                      psi_only.begin());
+  FactorPtr prod_factor = std::make_shared<Factor>();
+  for (auto name_i : this->table.keys()){
+    std::pair<AssigPtr,double> pair_i= this->table.get(name_i);
+    std::cout << pair_i.second << " ";
+  }
+  return prod_factor;
+}
+
+
 std::string Factor::to_str(){
   std::string id="";
   for(auto var_i : this->variables){
@@ -181,10 +223,14 @@ std::vector<std::string> split(std::string str){
 }
 
 int main(){
-  FactorPtr factor= read_factor("fac.txt");
-  std::cout << factor->to_str();
-//  AssigPtr evidence(new Assig({{"Y", 1}}));
-  FactorPtr f=factor->marginalize("Y");
-  std::cout << "*************\n";
-  std::cout << f->to_str();
+  FactorPtr A= read_factor("A.txt");
+  FactorPtr B= read_factor("B.txt");
+  FactorPtr C=A->product(A);
+//  FactorPtr factor= read_factor("fac.txt");
+
+//  FactorPtr factor= read_factor("fac.txt");
+//  std::cout << factor->to_str();
+//  FactorPtr f=factor->marginalize("Y");
+//  std::cout << "*************\n";
+  std::cout << C->to_str();
 }

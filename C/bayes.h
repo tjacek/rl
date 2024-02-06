@@ -3,6 +3,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <unordered_set>
 #include <memory>
 #include <fstream>
 #include <sstream>
@@ -31,7 +32,9 @@ class Table{
     std::map<std::string,double> prob_dict;
     std::map<std::string,AssigPtr> assig_dict;
     
+    std::vector<std::string> keys();
     double get(AssigPtr assig);
+    std::pair<AssigPtr,double> get(std::string name);
     void set(AssigPtr assig,double p);
     void set(std::list<VariablePtr> & variables,std::vector<int> values,double p);
     double sum();
@@ -44,11 +47,14 @@ class Factor{
   public:
     std::list<VariablePtr> variables;
     Table table;
-    std::list<std::string> variable_names();
+    std::vector<std::string> variable_names();
+    std::unordered_set<std::string> variable_set();
+
     bool in_scope(std::string name);
     FactorPtr condition(AssigPtr evidence);
     FactorPtr condition(std::string name,int value);
     FactorPtr marginalize(std::string name);
+    FactorPtr product(FactorPtr ptr);
     std::string to_str();
 };
 
