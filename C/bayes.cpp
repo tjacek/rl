@@ -1,5 +1,21 @@
 #include "bayes.h"
 
+std::vector<VariablePtr> var_diff(std::vector<VariablePtr> & theta, 
+                                  std::vector<VariablePtr> & psi){
+  std::unordered_set<std::string> theta_names;
+  for(auto var_i :theta){
+    theta_names.insert(var_i->name);
+  }
+  std::vector<VariablePtr> psi_only;
+  for(auto var_i :psi){
+    if(!theta_names.contains(var_i->name)){
+      std::cout << var_i->name;
+      psi_only.push_back(var_i);
+    }
+  }
+  return psi_only;
+}
+
 std::string Assig::to_id(){
   std::string id="";
   for (auto pair_i : this->dict){
@@ -29,6 +45,34 @@ std::string Assig::to_str(){
   return id;
 }
 
+std::vector<AssigPtr> assignments(std::vector<VariablePtr> variables){
+  std::vector<AssigPtr> all_assig;
+  std::vector<int> curent(variables.size(), 0);
+  bool more=true;
+  AssigPtr a_i=std::make_shared<Assig>();
+  while(more){
+    for(int j=0;j<variables.size();j++){
+      a_i->dict[variables[j]->name]=curent[j];
+    }
+    more=false;
+    for(int j=0;j<curent.size()-1;j++){
+      if(curent[j]<variables[j]->domian){
+        curent[j]+=1;
+        more=true;
+        break;
+      }else{
+        curent[j]=0;
+      }
+    }
+//    for(int j=0;j<curent.size();j++){
+//      std::cout << curent[j] << " ";
+//    }
+    std::cout << a_i->to_str() <<"\n";
+  }
+  return all_assig;
+}
+
+
 std::vector<std::string> Table::keys(){
   std::vector<std::string> keys;
   keys.reserve(this->prob_dict.size());
@@ -57,7 +101,7 @@ void Table::set(AssigPtr assig,double p){
   this->prob_dict[id]=p;
 }
 
-void Table::set(std::list<VariablePtr> & variables,std::vector<int> values,double p){
+void Table::set(std::vector<VariablePtr> & variables,std::vector<int> values,double p){
   AssigPtr assig(new Assig());
   int i=0;
   for(auto var_i:variables){
@@ -148,25 +192,14 @@ FactorPtr Factor::marginalize(std::string name){
 }
 
 FactorPtr Factor::product(FactorPtr psi){
-//  std::unordered_set<std::string> theta_names=this->variable_set();
-//  std::unordered_set<std::string> psi_names=psi->variable_set();
-//  std::unordered_set<std::string> shared;
-//  std::set_intersection(theta_names.begin(), theta_names.end(), 
-//                        psi_names.begin(), psi_names.end(),
-//                        std::inserter(shared, shared.begin()));
-//  std::vector<std::string> psi_only;  
-
-//  std::set_difference(theta_names.begin(), theta_names.end(), 
-//                      psi_names.begin(), psi_names.end(), 
-//                      psi_only.begin());
+  std::vector<VariablePtr> psi_only=var_diff(this->variables,psi->variables);
   FactorPtr prod_factor = std::make_shared<Factor>();
   for (auto name_i : this->table.keys()){
     std::pair<AssigPtr,double> pair_i= this->table.get(name_i);
-    std::cout << pair_i.second << " ";
+    std::vector<AssigPtr> assg_i=assignments(this->variables);
   }
   return prod_factor;
 }
-
 
 std::string Factor::to_str(){
   std::string id="";
@@ -225,7 +258,7 @@ std::vector<std::string> split(std::string str){
 int main(){
   FactorPtr A= read_factor("A.txt");
   FactorPtr B= read_factor("B.txt");
-  FactorPtr C=A->product(A);
+  FactorPtr C=A->product(B);
 //  FactorPtr factor= read_factor("fac.txt");
 
 //  FactorPtr factor= read_factor("fac.txt");

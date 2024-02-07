@@ -16,6 +16,9 @@ class Variable{
 
 typedef std::shared_ptr<Variable> VariablePtr;
 
+std::vector<VariablePtr> var_diff(std::vector<VariablePtr>& base, 
+                                  std::vector<VariablePtr>& other);
+
 class Assig;
 typedef std::shared_ptr<Assig> AssigPtr;
 
@@ -27,6 +30,8 @@ class Assig{
     AssigPtr del(std::string name);
 };
 
+std::vector<AssigPtr> assignments(std::vector<VariablePtr> variables);
+
 class Table{
   public:
     std::map<std::string,double> prob_dict;
@@ -36,7 +41,7 @@ class Table{
     double get(AssigPtr assig);
     std::pair<AssigPtr,double> get(std::string name);
     void set(AssigPtr assig,double p);
-    void set(std::list<VariablePtr> & variables,std::vector<int> values,double p);
+    void set(std::vector<VariablePtr> & variables,std::vector<int> values,double p);
     double sum();
 };
 
@@ -45,7 +50,7 @@ typedef std::shared_ptr<Factor> FactorPtr;
 
 class Factor{
   public:
-    std::list<VariablePtr> variables;
+    std::vector<VariablePtr> variables;
     Table table;
     std::vector<std::string> variable_names();
     std::unordered_set<std::string> variable_set();
