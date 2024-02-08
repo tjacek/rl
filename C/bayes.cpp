@@ -34,6 +34,15 @@ AssigPtr Assig::del(std::string name){
   return new_assig;
 }
 
+AssigPtr  Assig::select(std::vector<std::string> names){
+  AssigPtr s_assig=std::make_shared<Assig>();  
+  for (auto name_i : names){
+    s_assig->dict[name_i]=this->dict[name_i];
+    
+  }
+  return s_assig;
+}
+
 std::string Assig::to_str(){
   std::string id="";
   for (auto pair_i : this->dict){
@@ -49,14 +58,15 @@ std::vector<AssigPtr> assignments(std::vector<VariablePtr> variables){
   std::vector<AssigPtr> all_assig;
   std::vector<int> curent(variables.size(), 0);
   bool more=true;
-  AssigPtr a_i=std::make_shared<Assig>();
   while(more){
+    AssigPtr a_i=std::make_shared<Assig>();
     for(int j=0;j<variables.size();j++){
       a_i->dict[variables[j]->name]=curent[j];
     }
+    all_assig.push_back(a_i);
     more=false;
-    for(int j=0;j<curent.size()-1;j++){
-      if(curent[j]<variables[j]->domian){
+    for(int j=0;j<curent.size();j++){
+      if(curent[j]<variables[j]->domian-1){
         curent[j]+=1;
         more=true;
         break;
@@ -64,14 +74,21 @@ std::vector<AssigPtr> assignments(std::vector<VariablePtr> variables){
         curent[j]=0;
       }
     }
-//    for(int j=0;j<curent.size();j++){
-//      std::cout << curent[j] << " ";
-//    }
-    std::cout << a_i->to_str() <<"\n";
+//  std::cout << a_i->to_str() <<"\n";
   }
   return all_assig;
 }
 
+AssigPtr merge(AssigPtr a, AssigPtr b){
+  AssigPtr assig=std::make_shared<Assig>();
+  for (const auto& [name_i, value_i] : a->dict) {
+    assig->dict[name_i]=value_i;
+  }
+  for (const auto& [name_i, value_i] : b->dict) {
+    assig->dict[name_i]=value_i;
+  }
+  return assig;
+}
 
 std::vector<std::string> Table::keys(){
   std::vector<std::string> keys;
@@ -135,7 +152,6 @@ std::unordered_set<std::string> Factor::variable_set(){
   return name_set;
 }
 
-
 bool Factor::in_scope(std::string name){
   for(const auto& variable_i : this->variables){
     if(variable_i->name==name){
@@ -196,7 +212,18 @@ FactorPtr Factor::product(FactorPtr psi){
   FactorPtr prod_factor = std::make_shared<Factor>();
   for (auto name_i : this->table.keys()){
     std::pair<AssigPtr,double> pair_i= this->table.get(name_i);
-    std::vector<AssigPtr> assg_i=assignments(this->variables);
+    for(auto assg_j:assignments(psi_only)){
+      AssigPtr a_ij=merge(pair_i.first,assg_j);
+      AssigPtr a_psi;
+      if( psi->variables.empty()){
+        a_psi=std::make_shared<Assig>();
+      }else{
+        a_psi=a_ij->select(psi->variable_names());
+      }
+      double p_ij=pair_i.second* psi->table.get(a_psi);
+      prod_factor->table.set(a_ij,p_ij);;
+      std::cout << a_psi->to_str() << "\n";
+    }
   }
   return prod_factor;
 }
@@ -239,6 +266,7 @@ FactorPtr read_factor(std::string name){
        }
        double p= std::stod(raw[raw.size()-1]);
        theta->table.set(theta->variables,assig,p);
+
     }
   }
   return theta;

@@ -28,9 +28,11 @@ class Assig{
     std::string to_id();
     std::string to_str();
     AssigPtr del(std::string name);
+    AssigPtr select(std::vector<std::string> names);
 };
 
 std::vector<AssigPtr> assignments(std::vector<VariablePtr> variables);
+AssigPtr merge(AssigPtr a, AssigPtr b);
 
 class Table{
   public:
