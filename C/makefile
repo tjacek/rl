@@ -1,2 +1,2 @@
-all: bayes.cpp ;
-	g++-10 bayes.cpp -o bayes -std=c++20;
+all: bayes.cpp graph.cpp;
+	g++-10 bayes.cpp graph.cpp -o bayes -std=c++20;

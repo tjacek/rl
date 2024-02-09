@@ -67,3 +67,17 @@ class Factor{
 
 FactorPtr read_factor(std::string name);
 std::vector<std::string> split(std::string str);
+
+class Graph{
+  public:
+    std::vector<std::vector<int>> near;
+    Graph(int size);
+    void add_edge(int i,int j);
+};
+
+class BayesNet{
+  public:
+    std::vector<VariablePtr> variables;
+    std::vector<FactorPtr> factors;
+    Graph graph;
+};
