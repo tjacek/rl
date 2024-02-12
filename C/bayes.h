@@ -70,9 +70,14 @@ std::vector<std::string> split(std::string str);
 
 class Graph{
   public:
-    std::vector<std::vector<int>> near;
+    std::vector<std::vector<int>>  start_edges;
+    std::vector<std::vector<int>>  end_edges;
     Graph(int size);
+    Graph(Graph &t);
     void add_edge(int i,int j);
+    std::vector<int> input_nodes();
+    std::vector<int> topological_sort();
+
 };
 
 class BayesNet{
