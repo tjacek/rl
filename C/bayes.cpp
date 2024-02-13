@@ -13,6 +13,8 @@ int main(){
   graph.add_edge(1,2);
   graph.add_edge(2,3);
   graph.add_edge(2,4);
+  std::cout << graph.to_str();
+  std::cout << "&&&&&&\n";
   graph.topological_sort();
 //  FactorPtr factor= read_factor("fac.txt");
 

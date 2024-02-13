@@ -8,14 +8,34 @@ Graph::Graph(int size){
   }
 }
 
-Graph::Graph(Graph &t){
+Graph::Graph(Graph &g){
+ for(int i=0;i<g.start_edges.size();i++){
+   std::vector<int> start_i;
+   for(int j=0;j<g.start_edges[i].size();j++){
+     start_i.push_back(g.start_edges[i][j]);
+   }
+   this->start_edges.push_back(start_i);
+   std::vector<int> end_i;
+   for(int j=0;j<g.end_edges[i].size();j++){
+     end_i.push_back(g.end_edges[i][j]);
+   }
+   this->end_edges.push_back(end_i);
+ }
+}
 
+int Graph::size(){
+  return this->start_edges.size();
 }
 
 void Graph::add_edge(int i,int j){
   this->start_edges[i].push_back(j);
   this->end_edges[j].push_back(i);
 }
+
+void Graph::remove_edge(int i,int j){
+//  vec.erase(std::remove(vec.begin(), vec.end(), 8), vec.end());
+}
+
 
 std::vector<int> Graph::input_nodes(){
   std::vector<int> input;
@@ -29,14 +49,33 @@ std::vector<int> Graph::input_nodes(){
   return input;
 }
 
-
 std::vector<int> Graph::topological_sort(){
   std::vector<int> ordering;
   std::vector<int> input_nodes=this->input_nodes();
+  Graph g=*this;
   while(!input_nodes.empty()){
     int n=input_nodes.back();
     input_nodes.pop_back();
     std::cout << n <<"\n";
   }
   return ordering;
+}
+
+std::string Graph::to_str(){
+  std::string str;
+  std::ostringstream stream;
+  for(int i=0;i<this->size();i++){
+    for(int j=0;j<this->start_edges[i].size();j++){
+      stream << this->start_edges[i][j] <<",";
+    }
+    stream << "|";
+    for(int j=0;j<this->end_edges[i].size();j++){
+      stream << this->end_edges[i][j] <<",";
+    }
+    if(!this->start_edges[i].empty() ||
+        !this->end_edges[i].empty()){
+      stream << "\n";
+    }
+  }
+  return stream.str();
 }
