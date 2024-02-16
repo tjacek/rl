@@ -5,5 +5,5 @@ typedef AssigPtr Evidence;
 
 
 class InferAlg{
- FactorPtr infer(Query query,Evidence evidence);
+ FactorPtr opearator()(BayesNet & bn,Query query,Evidence evidence);
 };

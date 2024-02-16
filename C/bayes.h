@@ -7,6 +7,14 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
+
+class Variable;
+typedef std::shared_ptr<Variable> VariablePtr;
+class Assig;
+typedef std::shared_ptr<Assig> AssigPtr;
+class Factor;
+typedef std::shared_ptr<Factor> FactorPtr;
 
 class Variable{
   public:
@@ -14,13 +22,8 @@ class Variable{
   	int domian=2;
 };
 
-typedef std::shared_ptr<Variable> VariablePtr;
-
 std::vector<VariablePtr> var_diff(std::vector<VariablePtr>& base, 
                                   std::vector<VariablePtr>& other);
-
-class Assig;
-typedef std::shared_ptr<Assig> AssigPtr;
 
 class Assig{
   public:
@@ -47,9 +50,6 @@ class Table{
     double sum();
 };
 
-class Factor;
-typedef std::shared_ptr<Factor> FactorPtr;
-
 class Factor{
   public:
     std::vector<VariablePtr> variables;
@@ -70,14 +70,16 @@ std::vector<std::string> split(std::string str);
 
 class Graph{
   public:
-    std::vector<std::vector<int>>  start_edges;
-    std::vector<std::vector<int>>  end_edges;
+    std::vector<std::list<int>>  start_edges;
+    std::vector<std::list<int>>  end_edges;
     Graph(int size);
     Graph(Graph &t);
+    int size();
     void add_edge(int i,int j);
+    void remove_edge(int i,int j);
     std::vector<int> input_nodes();
     std::vector<int> topological_sort();
-
+    std::string to_str();
 };
 
 class BayesNet{
@@ -85,4 +87,5 @@ class BayesNet{
     std::vector<VariablePtr> variables;
     std::vector<FactorPtr> factors;
     Graph graph;
+    BayesNet(int n):graph(n) {};
 };

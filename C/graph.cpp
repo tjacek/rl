@@ -60,7 +60,6 @@ std::vector<int> Graph::topological_sort(){
   std::vector<int> ordering;
   std::vector<int> input_nodes=this->input_nodes();
   Graph g=*this;
-//  std::cout << g.to_str() << "\n";
   while(!input_nodes.empty()){
     int n=input_nodes.back();
     input_nodes.pop_back();
@@ -70,14 +69,8 @@ std::vector<int> Graph::topological_sort(){
       if(g.end_edges[m].size()==0){
         input_nodes.push_back(m);
       }
-
-//      std::cout << input_nodes.size() <<"\n";
-//      std::cout << "************\n";
-//      std::cout << g.to_str(); //<< "\n";
-//      std::cout << "************\n";
     }
   }
-  show(ordering);
   return ordering;
 }
 
@@ -86,11 +79,11 @@ std::string Graph::to_str(){
   std::ostringstream stream;
   for(int i=0;i<this->size();i++){
     for(auto j:this->start_edges[i]){
-      stream << j <<",";//this->start_edges[i][j] <<",";
+      stream << j <<",";
     }
     stream << "|";
-    for(auto j:this->end_edges[i]){//int j=0;j<this->end_edges[i].size();j++){
-      stream << j  << ",";//this->end_edges[i][j] <<",";
+    for(auto j:this->end_edges[i]){
+      stream << j  << ",";
     }
     if(!this->start_edges[i].empty() ||
         !this->end_edges[i].empty()){
