@@ -9,7 +9,6 @@ std::vector<VariablePtr> var_diff(std::vector<VariablePtr> & theta,
   std::vector<VariablePtr> psi_only;
   for(auto var_i :psi){
     if(!theta_names.contains(var_i->name)){
-//      std::cout << var_i->name;
       psi_only.push_back(var_i);
     }
   }

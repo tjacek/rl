@@ -1,3 +1,6 @@
+#ifndef BAYES_H
+#define BAYES_H
+
 #include <string>
 #include <iostream>
 #include <list>
@@ -28,6 +31,8 @@ std::vector<VariablePtr> var_diff(std::vector<VariablePtr>& base,
 class Assig{
   public:
     std::map<std::string,int> dict;
+    Assig() = default;
+    Assig( std::map<std::string,int> dict):dict(dict) {};
     std::string to_id();
     std::string to_str();
     AssigPtr del(std::string name);
@@ -89,3 +94,5 @@ class BayesNet{
     Graph graph;
     BayesNet(int n):graph(n) {};
 };
+
+#endif
