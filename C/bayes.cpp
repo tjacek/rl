@@ -1,4 +1,5 @@
 #include "bayes.h"
+#include "infer.h"
 
 void test_product(){
   FactorPtr A= read_factor("A.txt");
@@ -37,6 +38,10 @@ void battery(){
   bn.factors.push_back(read_factor("battery/EBS.txt"));
   bn.factors.push_back(read_factor("battery/DE.txt"));
   bn.factors.push_back(read_factor("battery/CE.txt"));
+  Query query={"B"};
+  Evidence evidence(new Assig({{"D",1},{"C",1}}));
+  WeightedSampling sampling(5);
+  sampling(bn,query,evidence);
 }
 
 int main(){

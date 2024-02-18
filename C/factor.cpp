@@ -231,6 +231,20 @@ FactorPtr Factor::product(FactorPtr psi){
   return prod_factor;
 }
 
+AssigPtr Factor::sample(){
+  double tot=0.0;
+  double p = (float)rand() / (float)RAND_MAX;
+  double w = this->table.sum();
+  for(auto name_i:this->table.keys()){
+    std::pair<AssigPtr,double> v_i=this->table.get(name_i);
+    tot += v_i.second/w;
+    if(tot>p){
+      return v_i.first;
+    }
+  }
+  return std::make_shared<Assig>();
+}
+
 std::string Factor::to_str(){
   std::string id="";
   for(auto var_i : this->variables){
