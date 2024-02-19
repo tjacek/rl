@@ -67,6 +67,7 @@ class Factor{
     FactorPtr condition(std::string name,int value);
     FactorPtr marginalize(std::string name);
     FactorPtr product(FactorPtr ptr);
+    void normalize();
     AssigPtr sample();
     std::string to_str();
 };

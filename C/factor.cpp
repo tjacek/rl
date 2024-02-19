@@ -231,6 +231,14 @@ FactorPtr Factor::product(FactorPtr psi){
   return prod_factor;
 }
 
+void Factor::normalize(){
+  double z=this->table.sum();
+  for(auto key_i :this->table.keys()){
+    std::pair<AssigPtr,double> pair_i=this->table.get(key_i);
+    this->table.set(pair_i.first,pair_i.second/z);
+  }
+}
+
 AssigPtr Factor::sample(){
   double tot=0.0;
   double p = (float)rand() / (float)RAND_MAX;

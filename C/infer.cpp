@@ -19,6 +19,17 @@ FactorPtr WeightedSampling::operator()(BayesNet & bn,Query query,Evidence eviden
          a_i->dict[name_j]=rand_a->dict[name_j];
       }
     }
+    AssigPtr b_i=a_i->select(query);
+    double value_i=factor->table.get(b_i)+w_i;
+    factor->table.set(b_i,value_i);
+//    std::cout << a_i->to_str() <<"\n";
   }
+  std::unordered_set<std::string> query_set(std::begin(query),std::end(query));;
+  for(auto var_i:bn.variables){
+    if(query_set.contains(var_i->name)){
+      factor->variables.push_back(var_i);
+    }
+  }
+  factor->normalize();
   return factor; 
 }
