@@ -70,6 +70,7 @@ class Factor{
     void normalize();
     AssigPtr sample();
     std::string to_str();
+    void show_keys();
 };
 
 FactorPtr read_factor(std::string name);

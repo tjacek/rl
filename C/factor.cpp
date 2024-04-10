@@ -241,12 +241,20 @@ void Factor::normalize(){
 
 AssigPtr Factor::sample(){
   double tot=0.0;
-  double p = (float)rand() / (float)RAND_MAX;
+  double p = (float) rand() / (float)RAND_MAX;
+//  this->show_keys();
+//  std::cout << "Cond " << this->table.sum() << "\n";
   double w = this->table.sum();
+  if(w<0.0001){
+    w=0.00001;
+  }
+//  std::cout << "w " << w << "\n";
   for(auto name_i:this->table.keys()){
+//    std::cout << "name:"<< name_i << "\n";
     std::pair<AssigPtr,double> v_i=this->table.get(name_i);
-    tot += v_i.second/w;
+    tot += (v_i.second/w);
     if(tot>p){
+//      std::cout << v_i.first->to_str();
       return v_i.first;
     }
   }
@@ -269,6 +277,13 @@ std::string Factor::to_str(){
     id+=line_j+":"+std::to_string(pair_i.second)+"\n";
   }
   return id;
+}
+
+void Factor::show_keys(){
+  for(auto name_i:this->table.keys()){
+    std::cout << name_i << "|";
+  }
+  std::cout <<"\n";
 }
 
 FactorPtr read_factor(std::string name){
